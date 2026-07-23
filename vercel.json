@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://flowspace-backend-7ql5.onrender.com/api/$1",
+      "dest": "https://flowspace-backend-j4ql.onrender.com/api/$1",
       "methods": ["GET","POST","PUT","DELETE","PATCH"]
     },
     { "src": "/", "dest": "/fe/index.html" },
