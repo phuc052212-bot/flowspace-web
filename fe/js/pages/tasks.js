@@ -320,7 +320,8 @@
       if (!projectId) { FS.toast('Vui lòng chọn dự án!', 'warning'); return; }
 
       const id = $('#task-modal-id').val();
-      const isNew = !id;
+      const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      const isNew = !id || !isGuid;
 
       const payload = {
         title: title,
@@ -336,8 +337,9 @@
         completionScore: $('#task-modal-score').val() ? parseInt($('#task-modal-score').val()) : null
       };
 
+      const currentTask = id ? this._tasksData.find(t => t.id === id) : null;
       if (isNew) {
-        payload.code = 'T-' + String(this._tasksData.length + 1).padStart(3, '0');
+        payload.code = currentTask ? currentTask.code : ('T-' + String(this._tasksData.length + 1).padStart(3, '0'));
       }
 
       try {
@@ -350,7 +352,6 @@
           });
         } else {
           // Bổ sung loggedHours khi update nếu backend yêu cầu (default 0)
-          const currentTask = this._tasksData.find(t => t.id === id);
           payload.loggedHours = currentTask ? currentTask.loggedHours : 0;
 
           response = await FS.apiCall({
@@ -362,6 +363,15 @@
 
         if (response && response.success) {
           FS.toast(isNew ? 'Tạo công việc thành công!' : 'Cập nhật thành công!', 'success');
+          
+          // Cập nhật local storage dọn dẹp cache
+          if (id && !isGuid) {
+            FS.db.remove('tasks', id);
+          }
+          if (response.data) {
+            FS.db.save('tasks', response.data);
+          }
+          
           $('#task-modal-overlay').hide();
           await this._loadData();
           return;
