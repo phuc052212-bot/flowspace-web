@@ -251,13 +251,21 @@
 
     normalizeTask(t) {
       if (!t) return null;
+      
+      let projName = t.projectName || '';
+      if (!projName && t.projectId) {
+        const projects = FS.db.get('projects') || [];
+        const p = projects.find(x => x.id === t.projectId);
+        if (p) projName = p.name;
+      }
+
       return {
         id: t.id,
         code: t.code || 'TSK-' + (t.id || '00'),
         title: t.title || 'Công việc không tên',
         description: t.description || '',
         projectId: t.projectId || '',
-        projectName: t.projectName || '',
+        projectName: projName,
         assigneeId: t.assigneeId || '',
         assigneeName: t.assigneeName || '',
         assigneeAvatar: t.assigneeAvatar || '',
