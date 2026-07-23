@@ -442,9 +442,7 @@
     const ajaxOptions = $.extend(true, {
       timeout: 20000, // 20s
       headers: authHeaders,
-      contentType: 'application/json',
-      xhrFields: { withCredentials: true },
-      crossDomain: true
+      contentType: 'application/json'
     }, options);
 
     if (ajaxOptions.data && typeof ajaxOptions.data === 'object' && !(ajaxOptions.data instanceof FormData)) {

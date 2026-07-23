@@ -53,7 +53,11 @@
     settings: 1,
   };
 
-  const API_BASE = "https://flowspace-backend-j4ql.onrender.com";
+  // Smart API routing: use Vercel proxy (same-origin) when on Vercel to avoid CORS,
+  // fall back to direct Render URL for local/other environments
+  const RENDER_URL = "https://flowspace-backend-j4ql.onrender.com";
+  const isVercel = location.hostname.endsWith('.vercel.app') || location.hostname.endsWith('.vercel.sh');
+  const API_BASE = isVercel ? "" : RENDER_URL;
   FS.API_BASE = API_BASE;
 
   // Password helpers (simple encode — NOT cryptographic)
