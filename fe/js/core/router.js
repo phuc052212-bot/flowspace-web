@@ -59,8 +59,7 @@
         '<div class="page-loader"><div class="fs-spinner"></div><span>Đang tải...</span></div>'
       );
 
-      const url = `pages/${page}.html`;
-      $content.load(url, function (response, status) {
+      $content.load(url, async function (response, status) {
         $content.removeClass('loading');
         if (status === 'error') {
           $content.html(`
@@ -78,7 +77,7 @@
         // Gọi JS module tương ứng
         if (window.FS.pages && window.FS.pages[page]) {
           try {
-            window.FS.pages[page].init();
+            await window.FS.pages[page].init();
           } catch (e) {
             console.error(`[Router] Error initializing page ${page}:`, e);
           }

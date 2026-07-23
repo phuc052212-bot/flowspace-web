@@ -49,11 +49,21 @@
           }));
           $('#projects-offline-banner').remove();
         } else {
-          this._projectsData = FS.db.get('projects') || [];
+          try {
+            this._projectsData = FS.db.get('projects') || [];
+          } catch (dbErr) {
+            console.error('Failed to read projects from local storage:', dbErr);
+            this._projectsData = [];
+          }
         }
       } catch (err) {
         console.warn('Projects API request failed:', err);
-        this._projectsData = FS.db.get('projects') || [];
+        try {
+          this._projectsData = FS.db.get('projects') || [];
+        } catch (dbErr) {
+          console.error('Failed to read projects from local storage:', dbErr);
+          this._projectsData = [];
+        }
         if (!$('#projects-offline-banner').length) {
           $('#page-content').prepend('<div id="projects-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu tạm thời ngoại tuyến.</span></div>');
         }

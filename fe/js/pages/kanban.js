@@ -56,11 +56,21 @@
           }));
           $('#kanban-offline-banner').remove();
         } else {
-          this._tasksData = FS.db.get('tasks') || [];
+          try {
+            this._tasksData = FS.db.get('tasks') || [];
+          } catch (dbErr) {
+            console.error('Failed to read tasks from local storage:', dbErr);
+            this._tasksData = [];
+          }
         }
       } catch (err) {
         console.warn('Kanban Tasks API request failed:', err);
-        this._tasksData = FS.db.get('tasks') || [];
+        try {
+          this._tasksData = FS.db.get('tasks') || [];
+        } catch (dbErr) {
+          console.error('Failed to read tasks from local storage:', dbErr);
+          this._tasksData = [];
+        }
         if (!$('#kanban-offline-banner').length) {
           $('#page-content').prepend('<div id="kanban-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu tạm thời ngoại tuyến.</span></div>');
         }
@@ -68,7 +78,12 @@
     },
 
     _populateFilters() {
-      const projects = FS.db.get('projects') || [];
+      let projects = [];
+      try {
+        projects = FS.db.get('projects') || [];
+      } catch (dbErr) {
+        console.error('Failed to read projects from local storage in Kanban filters:', dbErr);
+      }
       $('#kanban-filter-project').html('<option value="">Tất cả dự án</option>' +
         projects.map(p => `<option value="${p.id}">${FS.str.escape(p.name)}</option>`).join('')
       );

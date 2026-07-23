@@ -57,11 +57,21 @@
           $('#requests-offline-banner').remove();
         } else {
           // Unexpected payload – fall back to local storage
-          this._requestsData = FS.db.get('requests') || [];
+          try {
+            this._requestsData = FS.db.get('requests') || [];
+          } catch (dbErr) {
+            console.error('Failed to read requests from local storage:', dbErr);
+            this._requestsData = [];
+          }
         }
       } catch (err) {
         console.warn('Requests API failed:', err);
-        this._requestsData = FS.db.get('requests') || [];
+        try {
+          this._requestsData = FS.db.get('requests') || [];
+        } catch (dbErr) {
+          console.error('Failed to read requests from local storage:', dbErr);
+          this._requestsData = [];
+        }
         if (!$('#requests-offline-banner').length) {
           $('#page-content').prepend('<div id="requests-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu yêu cầu tạm thời ngoại tuyến.</span></div>');
         }

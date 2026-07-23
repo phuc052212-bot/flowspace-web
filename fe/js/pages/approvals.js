@@ -7,7 +7,10 @@
 
     async init() {
       if (!FS.auth.isTeamLead()) {
-        document.getElementById('approvals-list').innerHTML = '<div class="fs-empty"><i class="bi bi-shield-lock"></i><h5>Không có quyền truy cập</h5><p>Tính năng này dành cho Trưởng nhóm trở lên.</p></div>';
+        const listEl = document.getElementById('approvals-list');
+        if (listEl) {
+          listEl.innerHTML = '<div class="fs-empty"><i class="bi bi-shield-lock"></i><h5>Không có quyền truy cập</h5><p>Tính năng này dành cho Trưởng nhóm trở lên.</p></div>';
+        }
         return;
       }
       await this._loadData();
@@ -51,11 +54,29 @@
           }));
           $('#approvals-offline-banner').remove();
         } else {
-          this._requestsData = FS.db.get('requests') || [];
+          try {
+            if (window.FS && FS.db && typeof FS.db.get === 'function') {
+              this._requestsData = FS.db.get('requests') || [];
+            } else {
+              this._requestsData = [];
+            }
+          } catch (dbErr) {
+            console.error('Failed to read requests from local storage:', dbErr);
+            this._requestsData = [];
+          }
         }
       } catch (err) {
         console.warn('Pending approvals API request failed, falling back to LocalStorage:', err);
-        this._requestsData = FS.db.get('requests') || [];
+        try {
+          if (window.FS && FS.db && typeof FS.db.get === 'function') {
+            this._requestsData = FS.db.get('requests') || [];
+          } else {
+            this._requestsData = [];
+          }
+        } catch (dbErr) {
+          console.error('Failed to read requests from local storage:', dbErr);
+          this._requestsData = [];
+        }
         if (!$('#approvals-offline-banner').length) {
           $('#page-content').prepend('<div id="approvals-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu phê duyệt ngoại tuyến.</span></div>');
         }
@@ -70,7 +91,7 @@
 
       if (this._statusFilter) {
         requests = requests.filter(r => {
-          const myStep = (r.approvals || []).find(a => a.role.toLowerCase() === role.toLowerCase());
+          const myStep = (r.approvals || []).find(a => a.role && a.role.toLowerCase() === role.toLowerCase());
           return myStep && myStep.status.toLowerCase() === this._statusFilter.toLowerCase();
         });
       }
@@ -81,38 +102,50 @@
       const requests = this._getFilteredData();
       const sessionRole = FS.auth.getSession()?.role || 'employee';
       const pendingCount = this._requestsData.filter(r => {
-        const step = (r.approvals || []).find(a => a.role.toLowerCase() === sessionRole.toLowerCase());
+        const step = (r.approvals || []).find(a => a.role && a.role.toLowerCase() === sessionRole.toLowerCase());
         return step && step.status.toLowerCase() === 'pending';
       }).length;
 
-      $('#approvals-pending-badge').text(`${pendingCount} chờ duyệt`);
-      if (pendingCount > 0) $('#nav-approval-badge').text(pendingCount).show();
-      else $('#nav-approval-badge').hide();
+      const badgeEl = $('#approvals-pending-badge');
+      if (badgeEl.length) {
+        badgeEl.text(`${pendingCount} chờ duyệt`);
+      }
+      const navBadgeEl = $('#nav-approval-badge');
+      if (navBadgeEl.length) {
+        if (pendingCount > 0) {
+          navBadgeEl.text(pendingCount).show();
+        } else {
+          navBadgeEl.hide();
+        }
+      }
+
+      const listEl = $('#approvals-list');
+      if (!listEl.length) return;
 
       if (!requests.length) {
-        $('#approvals-list').html('<div class="fs-empty"><i class="bi bi-inbox-fill"></i><h5>Không có yêu cầu nào</h5></div>');
+        listEl.html('<div class="fs-empty"><i class="bi bi-inbox-fill"></i><h5>Không có yêu cầu nào</h5></div>');
         return;
       }
 
       const typeLabels = { leave: '🏖️ Nghỉ phép', overtime: '⏰ Tăng ca', purchase: '🛒 Mua sắm', remote: '🏠 Làm remote' };
 
-      $('#approvals-list').html(requests.map(r => {
-        const requesterName = r.requesterName || (FS.db.find('users', r.requesterId)?.name || '—');
-        const myStep = (r.approvals || []).find(a => a.role.toLowerCase() === sessionRole.toLowerCase());
-        const isPending = myStep?.status === 'pending';
+      listEl.html(requests.map(r => {
+        const requesterName = r.requesterName || ((window.FS && FS.db && typeof FS.db.find === 'function') ? (FS.db.find('users', r.requesterId)?.name || '—') : '—');
+        const myStep = (r.approvals || []).find(a => a.role && a.role.toLowerCase() === sessionRole.toLowerCase());
+        const isPending = myStep && myStep.status === 'pending';
         return `
-          <div class="fs-card mb-2" style="border-radius:var(--fs-radius-md);border-left:3px solid ${isPending ? 'var(--fs-warning)' : myStep?.status === 'approved' ? 'var(--fs-success)' : 'var(--fs-danger')}">
+          <div class="fs-card mb-2" style="border-radius:var(--fs-radius-md);border-left:3px solid ${isPending ? 'var(--fs-warning)' : (myStep?.status === 'approved' ? 'var(--fs-success)' : 'var(--fs-danger)')}">
             <div class="d-flex align-items-start gap-3">
-              ${FS.user.avatar(r.requesterId)}
+              ${(window.FS && FS.user && typeof FS.user.avatar === 'function') ? FS.user.avatar(r.requesterId) : '<div class="fs-avatar">?</div>'}
               <div style="flex:1;min-width:0">
                 <div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
                   <span class="fs-badge badge-neutral">${typeLabels[r.type] || r.type}</span>
-                  <span style="font-size:13px;font-weight:600">${FS.str.escape(r.title)}</span>
+                  <span style="font-size:13px;font-weight:600">${(window.FS && FS.str && typeof FS.str.escape === 'function') ? FS.str.escape(r.title) : r.title}</span>
                 </div>
-                <p style="font-size:12px;color:var(--fs-text-secondary);margin-bottom:8px">${FS.str.escape(r.description)}</p>
+                <p style="font-size:12px;color:var(--fs-text-secondary);margin-bottom:8px">${(window.FS && FS.str && typeof FS.str.escape === 'function') ? FS.str.escape(r.description) : r.description}</p>
                 <div class="d-flex align-items-center gap-3">
-                  <span class="fs-small"><i class="bi bi-person me-1"></i>${FS.str.escape(requesterName)}</span>
-                  <span class="fs-small"><i class="bi bi-calendar3 me-1"></i>${FS.date.format(r.createdAt)}</span>
+                  <span class="fs-small"><i class="bi bi-person me-1"></i>${(window.FS && FS.str && typeof FS.str.escape === 'function') ? FS.str.escape(requesterName) : requesterName}</span>
+                  <span class="fs-small"><i class="bi bi-calendar3 me-1"></i>${(window.FS && FS.date && typeof FS.date.format === 'function') ? FS.date.format(r.createdAt) : r.createdAt}</span>
                 </div>
                 ${isPending ? `
                   <div class="d-flex gap-2 mt-2">
@@ -153,23 +186,39 @@
       }
 
       // LocalStorage fallback
-      const r = FS.db.find('requests', reqId);
+      let r = null;
+      try {
+        if (window.FS && FS.db && typeof FS.db.find === 'function') {
+          r = FS.db.find('requests', reqId);
+        }
+      } catch (dbErr) {
+        console.error('Failed to find request in local storage:', dbErr);
+      }
+
       const session = FS.auth.getSession();
       if (r) {
-        const myStep = r.approvals.find(a => a.role === session?.role);
+        const myStep = (r.approvals || []).find(a => a.role && a.role.toLowerCase() === (session?.role || '').toLowerCase());
         if (myStep) {
           myStep.status = decision;
           myStep.approverId = session?.userId;
           myStep.updatedAt = new Date().toISOString();
-          const stillPending = r.approvals.some(a => a.status === 'pending');
+          const stillPending = (r.approvals || []).some(a => a.status === 'pending');
           if (!stillPending) {
-            r.status = r.approvals.every(a => a.status === 'approved') ? 'approved' : 'rejected';
+            r.status = (r.approvals || []).every(a => a.status === 'approved') ? 'approved' : 'rejected';
           }
-          FS.db.save('requests', r);
+          try {
+            if (window.FS && FS.db && typeof FS.db.save === 'function') {
+              FS.db.save('requests', r);
+            }
+          } catch (dbErr) {
+            console.error('Failed to save request to local storage:', dbErr);
+          }
         }
       }
       await this._loadData();
-      FS.toast(decision === 'approved' ? '✅ Đã phê duyệt!' : '❌ Đã từ chối', decision === 'approved' ? 'success' : 'error');
+      if (window.FS && typeof FS.toast === 'function') {
+        FS.toast(decision === 'approved' ? '✅ Đã phê duyệt!' : '❌ Đã từ chối', decision === 'approved' ? 'success' : 'error');
+      }
     },
 
     _bindEvents() {
@@ -188,7 +237,9 @@
         e.stopPropagation();
         const reqId = $(this).data('req-id');
         const approvalId = $(this).data('approval-id');
-        FS.confirm('Từ chối yêu cầu này?', () => self._processApproval(reqId, approvalId, 'rejected'), { danger: true, confirmText: 'Từ chối', cancelText: 'Hủy' });
+        if (window.FS && typeof FS.confirm === 'function') {
+          FS.confirm('Từ chối yêu cầu này?', () => self._processApproval(reqId, approvalId, 'rejected'), { danger: true, confirmText: 'Từ chối', cancelText: 'Hủy' });
+        }
       });
     }
   };
