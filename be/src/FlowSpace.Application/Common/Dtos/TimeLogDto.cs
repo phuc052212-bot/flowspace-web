@@ -13,5 +13,7 @@ namespace FlowSpace.Application.Common.Dtos
         public string? Description { get; set; }
         public DateTime LoggedDate { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid ProjectId { get; set; }
+        public string ProjectName { get; set; } = string.Empty;
     }
 }

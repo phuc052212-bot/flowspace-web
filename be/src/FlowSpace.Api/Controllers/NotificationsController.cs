@@ -39,7 +39,7 @@ namespace FlowSpace.Api.Controllers
                 .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
 
-            return OkResponse(notifications, "Notifications retrieved successfully.");
+            return OkResponse<IEnumerable<Notification>>(notifications, "Notifications retrieved successfully.");
         }
 
         // PUT /api/v1/notifications/{id}/mark-read

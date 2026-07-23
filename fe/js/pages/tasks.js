@@ -5,74 +5,61 @@
 (function (FS, $) {
   'use strict';
 
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 6;
 
   FS.pages.tasks = {
+    _view: 'list',
     _filter: { search: '', status: '', priority: '', project: '', assignee: '' },
     _page: 1,
     _tasksData: [],
 
     async init() {
-      await this._loadData();
+      // 1. Instant 0ms SWR render with local seed data (NO SPINNER!)
+      this._tasksData = (FS.db.get('tasks') || []).map(t => FS.data.normalizeTask(t));
       this._populateFilters();
+      this._render();
       this._bindEvents();
+
+      // 2. Fetch live data from backend API in background & sync seamlessly
+      await this._loadData();
     },
 
     async _loadData() {
       try {
-        // Load users cache trước để hiển thị tên/avatar chính xác
-        await FS.loadUsersCache();
+        try {
+          await FS.loadUsersCache();
+        } catch (e) {
+          console.warn('loadUsersCache failed in tasks page:', e);
+        }
 
         const response = await FS.apiCall({
           url: FS.API_BASE + '/api/v1/tasks',
           type: 'GET'
         });
 
-        if (response && response.success && Array.isArray(response.data)) {
-          this._tasksData = response.data.map(t => ({
-            id: t.id,
-            code: t.code,
-            title: t.title,
-            description: t.description || '',
-            projectId: t.projectId,
-            projectName: t.projectName || '',
-            assigneeId: t.assigneeId,
-            assigneeName: t.assigneeName || '',
-            assigneeAvatar: t.assigneeAvatar || '',
-            assigneeColor: t.assigneeColor || '',
-            status: (t.status || 'todo').toLowerCase(),
-            priority: (t.priority || 'medium').toLowerCase(),
-            startDate: t.startDate,
-            dueDate: t.dueDate,
-            completedAt: t.completedAt,
-            estimatedHours: t.estimatedHours || 0,
-            loggedHours: t.loggedHours || 0,
-            subtasks: t.subtasks || [],
-            comments: t.comments || [],
-            createdAt: t.createdAt
-          }));
+        if (response && response.success && Array.isArray(response.data) && response.data.length > 0) {
+          const apiTasks = response.data.map(t => FS.data.normalizeTask(t));
+
+          const mergedMap = new Map();
+          const seedData = (FS.db.get('tasks') || []).map(t => FS.data.normalizeTask(t));
+          for (const s of seedData) mergedMap.set(s.id, s);
+          for (const a of apiTasks) mergedMap.set(a.id, a);
+
+          this._tasksData = Array.from(mergedMap.values());
           $('#tasks-offline-banner').remove();
         } else {
-          try {
-            this._tasksData = FS.db.get('tasks') || [];
-          } catch (dbErr) {
-            console.error('Failed to read tasks from local storage:', dbErr);
-            this._tasksData = [];
-          }
+          this._tasksData = FS.db.get('tasks') || [];
         }
       } catch (err) {
         console.warn('Tasks API request failed:', err);
-        try {
-          this._tasksData = FS.db.get('tasks') || [];
-        } catch (dbErr) {
-          console.error('Failed to read tasks from local storage:', dbErr);
-          this._tasksData = [];
-        }
+        this._tasksData = FS.db.get('tasks') || [];
         if (!$('#tasks-offline-banner').length) {
           $('#page-content').prepend('<div id="tasks-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu tạm thời ngoại tuyến.</span></div>');
         }
+      } finally {
+        this._populateFilters();
+        this._render();
       }
-      this._render();
     },
 
     _populateFilters() {
@@ -114,10 +101,60 @@
 
       $('#tasks-count-label').text(`${total} công việc`);
 
+      if (this._view === 'list') {
+        $('#tasks-list-view').removeClass('d-none');
+        $('#tasks-card-view').addClass('d-none');
+        this._renderTable(tasks);
+      } else {
+        $('#tasks-list-view').addClass('d-none');
+        $('#tasks-card-view').removeClass('d-none');
+        this._renderCards(tasks);
+      }
+
+      // Pagination
+      const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+      const $ul = $('#tasks-pagination-ul');
+      const $info = $('#tasks-pagination-info');
+
+      if (total === 0) {
+        $info.text('Hiển thị 0 trong 0 công việc');
+        $ul.html('');
+        return;
+      }
+
+      $info.text(`Hiển thị ${start + 1}-${Math.min(start + PAGE_SIZE, total)} trong ${total} công việc`);
+
+      let html = '';
+
+      // Nút quay lại bị vô hiệu hóa khi ở trang 1
+      if (this._page === 1) {
+        html += `<li class="page-item disabled" aria-disabled="true"><span class="page-link">&laquo; Trước</span></li>`;
+      } else {
+        html += `<li class="page-item"><a class="page-link task-page-link" data-page="${this._page - 1}" href="#">&laquo; Trước</a></li>`;
+      }
+
+      // Danh sách trang
+      for (let p = 1; p <= totalPages; p++) {
+        if (p === this._page) {
+          html += `<li class="page-item active" aria-current="page"><span class="page-link">${p}</span></li>`;
+        } else {
+          html += `<li class="page-item"><a class="page-link task-page-link" data-page="${p}" href="#">${p}</a></li>`;
+        }
+      }
+
+      // Nút trang tiếp theo
+      if (this._page === totalPages) {
+        html += `<li class="page-item disabled" aria-disabled="true"><span class="page-link">Sau &raquo;</span></li>`;
+      } else {
+        html += `<li class="page-item"><a class="page-link task-page-link" data-page="${this._page + 1}" href="#">Sau &raquo;</a></li>`;
+      }
+
+      $ul.html(html);
+    },
+
+    _renderTable(tasks) {
       if (!tasks.length) {
         $('#tasks-table-body').html('<tr><td colspan="8"><div class="fs-empty"><i class="bi bi-check-square"></i><h5>Không tìm thấy công việc</h5><p>Thử thay đổi bộ lọc hoặc tạo công việc mới</p></div></td></tr>');
-        $('#tasks-pagination-info').text('');
-        $('#tasks-pagination-btns').html('');
         return;
       }
 
@@ -174,21 +211,70 @@
             </td>
           </tr>`;
       }).join(''));
+    },
 
-      // Pagination
-      const totalPages = Math.ceil(total / PAGE_SIZE);
-      $('#tasks-pagination-info').text(`Hiển thị ${start + 1}–${Math.min(start + PAGE_SIZE, total)} / ${total}`);
-
-      if (totalPages <= 1) {
-        $('#tasks-pagination-btns').html('');
+    _renderCards(tasks) {
+      if (!tasks.length) {
+        $('#tasks-card-grid').html('<div class="col-12"><div class="fs-empty"><i class="bi bi-check-square"></i><h5>Không tìm thấy công việc</h5><p>Thử thay đổi bộ lọc hoặc tạo công việc mới</p></div></div>');
         return;
       }
-      const self = this;
-      let paginHtml = '';
-      for (let i = 1; i <= totalPages; i++) {
-        paginHtml += `<button class="btn btn-sm ${i === self._page ? 'btn-primary' : 'btn-ghost'} page-btn" data-page="${i}">${i}</button>`;
-      }
-      $('#tasks-pagination-btns').html(paginHtml);
+
+      $('#tasks-card-grid').html(tasks.map(t => {
+        const overdue = FS.date.isOverdue(t.dueDate) && t.status !== 'done';
+        const isDone = t.status === 'done';
+
+        let assigneeName = t.assigneeName || '';
+        let assigneeAvatar = t.assigneeAvatar || '';
+        let assigneeColor = t.assigneeColor || '';
+
+        if (!assigneeName && t.assigneeId) {
+          const u = FS.user.get(t.assigneeId);
+          if (u) {
+            assigneeName = u.name;
+            assigneeAvatar = u.avatar;
+            assigneeColor = u.color;
+          }
+        }
+
+        const avatarHtml = (FS.user && FS.user.avatar)
+          ? FS.user.avatar(t.assigneeId, 'sm', assigneeName || 'Thành viên')
+          : `<div class="fs-avatar fs-avatar-sm ${assigneeColor || 'av-indigo'}" title="${FS.str.escape(assigneeName || 'Thành viên')}">${assigneeAvatar || 'TV'}</div>`;
+
+        return `
+          <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="fs-card task-row" data-task-id="${t.id}" style="cursor:pointer;height:100%;display:flex;flex-direction:column;justify-content:space-between">
+              <div>
+                <div class="d-flex align-items-start justify-content-between mb-2">
+                  <span class="fs-small" style="color:var(--fs-accent);font-weight:600">${t.code}</span>
+                  ${FS.badge.status(t.status)}
+                </div>
+                <h6 style="font-weight:600;font-size:14px;margin-bottom:6px;line-height:1.4;${isDone ? 'text-decoration:line-through;color:var(--fs-text-muted)' : ''}">
+                  ${FS.str.escape(t.title)}
+                </h6>
+                <div class="fs-small text-muted mb-3" style="font-size:12px">
+                  <i class="bi bi-folder2-open me-1"></i>${FS.str.escape(t.projectName || '—')}
+                </div>
+              </div>
+
+              <div>
+                <div class="d-flex align-items-center justify-content-between pt-2" style="border-top:1px solid var(--fs-border)">
+                  <div class="d-flex align-items-center gap-2">
+                    ${avatarHtml}
+                    ${FS.badge.priority(t.priority)}
+                  </div>
+                  <div class="d-flex align-items-center gap-1">
+                    <span style="font-size:11px;${overdue ? 'color:var(--fs-danger);font-weight:600' : 'color:var(--fs-text-muted)'}">
+                      ${overdue ? '<i class="bi bi-exclamation-triangle-fill me-1"></i>' : ''}${FS.date.format(t.dueDate)}
+                    </span>
+                    <button class="btn btn-ghost btn-icon btn-sm task-done-toggle ms-1" data-task-id="${t.id}" title="${isDone ? 'Đánh dấu chưa xong' : 'Đánh dấu hoàn thành'}" style="color:${isDone ? 'var(--fs-success)' : 'var(--fs-border)'}">
+                      <i class="bi bi-${isDone ? 'check-circle-fill' : 'circle'}" style="font-size:16px"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join(''));
     },
 
     _openModal(taskId = null) {
@@ -208,6 +294,8 @@
         $('#task-modal-start').val(FS.date.toInput(t.startDate));
         $('#task-modal-due').val(FS.date.toInput(t.dueDate));
         $('#task-modal-est').val(t.estimatedHours || '');
+        $('#task-modal-difficulty').val(t.difficulty || '');
+        $('#task-modal-score').val(t.completionScore || '');
       } else {
         $('#task-modal-title').text('Tạo công việc mới');
         $('#task-modal-id').val('');
@@ -216,6 +304,8 @@
         $('#task-modal-status').val('todo');
         $('#task-modal-start').val(FS.date.toInput(new Date().toISOString()));
         $('#task-modal-due, #task-modal-est').val('');
+        $('#task-modal-difficulty').val('');
+        $('#task-modal-score').val('');
         const session = FS.auth.getSession();
         if (session) $('#task-modal-assignee').val(session.userId);
       }
@@ -241,7 +331,9 @@
         status: $('#task-modal-status').val() || 'todo',
         startDate: $('#task-modal-start').val() ? new Date($('#task-modal-start').val()).toISOString() : null,
         dueDate: $('#task-modal-due').val() ? new Date($('#task-modal-due').val()).toISOString() : null,
-        estimatedHours: $('#task-modal-est').val() ? parseInt($('#task-modal-est').val()) : 0
+        estimatedHours: $('#task-modal-est').val() ? parseInt($('#task-modal-est').val()) : 0,
+        difficulty: $('#task-modal-difficulty').val() || '',
+        completionScore: $('#task-modal-score').val() ? parseInt($('#task-modal-score').val()) : null
       };
 
       if (isNew) {
@@ -285,6 +377,17 @@
     _bindEvents() {
       const self = this;
 
+      // View toggle
+      $(document).off('click.task-toggle').on('click.task-toggle', '#tasks-page .view-toggle', function (e) {
+        e.preventDefault();
+        const $btn = $(this).closest('.view-toggle');
+        $('#tasks-page .view-toggle').removeClass('active');
+        $btn.addClass('active');
+        const viewType = $btn.data('view') || 'list';
+        self._view = viewType;
+        self._render();
+      });
+
       // Search
       $('#task-search').off('input').on('input', function () {
         self._filter.search = this.value; self._page = 1; self._render();
@@ -313,8 +416,13 @@
       });
 
       // Pagination
-      $(document).off('click.task-page').on('click.task-page', '.page-btn', function () {
-        self._page = parseInt($(this).data('page')); self._render();
+      $(document).off('click.task-page').on('click.task-page', '.task-page-link', function (e) {
+        e.preventDefault();
+        const p = parseInt($(this).data('page'), 10);
+        if (p && p !== self._page) {
+          self._page = p;
+          self._render();
+        }
       });
 
       // Row click → open detail
@@ -354,7 +462,10 @@
       });
 
       // New task
-      $('#task-new-btn').off('click').on('click', function () { self._openModal(); });
+      $(document).off('click.task-new').on('click.task-new', '#task-new-btn', function (e) {
+        e.preventDefault();
+        self._openModal();
+      });
 
       // Modal controls
       $('#task-modal-close, #task-modal-cancel').off('click').on('click', () => $('#task-modal-overlay').hide());

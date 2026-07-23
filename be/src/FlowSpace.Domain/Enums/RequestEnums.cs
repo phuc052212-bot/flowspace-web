@@ -12,13 +12,17 @@ namespace FlowSpace.Domain.Enums
     {
         Pending,
         Approved,
-        Rejected
+        Rejected,
+        Cancelled,
+        Returned
     }
 
     public enum ApprovalStatus
     {
         Pending,
         Approved,
-        Rejected
+        Rejected,
+        Returned,
+        Forwarded
     }
 }

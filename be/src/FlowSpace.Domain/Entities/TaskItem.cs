@@ -52,13 +52,18 @@ namespace FlowSpace.Domain.Entities
         [Range(0.00, 999.99)]
         public decimal LoggedHours { get; set; } = 0.00m;
 
-        [Required]
         public Guid CreatedBy { get; set; }
 
         [ForeignKey(nameof(CreatedBy))]
         public User? Creator { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [MaxLength(50)]
+        public string? Difficulty { get; set; }
+
+        [Range(0, 100)]
+        public int? CompletionScore { get; set; }
 
         public ICollection<Subtask> Subtasks { get; set; } = new List<Subtask>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

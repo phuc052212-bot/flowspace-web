@@ -6,35 +6,58 @@
   'use strict';
 
   const COLUMNS = [
-    { id: 'todo',        label: 'Chưa bắt đầu', color: '#64748b', bg: '#f1f5f9' },
-    { id: 'in_progress', label: 'Đang làm',     color: '#6366f1', bg: '#eef2ff' },
-    { id: 'review',      label: 'Chờ duyệt',    color: '#f59e0b', bg: '#fefce8' },
-    { id: 'done',        label: 'Hoàn thành',   color: '#10b981', bg: '#f0fdf4' }
+    { id: 'todo', label: 'Todo', color: '#64748b', bg: '#f1f5f9' },
+    { id: 'inprogress', label: 'In Progress', color: '#6366f1', bg: '#eef2ff' },
+    { id: 'review', label: 'Review', color: '#8b5cf6', bg: '#faf5ff' },
+    { id: 'testing', label: 'Testing', color: '#ec4899', bg: '#fdf2f8' },
+    { id: 'done', label: 'Done', color: '#10b981', bg: '#f0fdf4' }
   ];
+
+  function normalizeStatus(s) {
+    let st = (s || 'todo').toLowerCase();
+    if (st === 'in_progress' || st === 'inprogress' || st === 'doing') return 'inprogress';
+    if (st === 'in_review' || st === 'review' || st === 'on_hold' || st === 'onhold') return 'review';
+    if (st === 'testing' || st === 'test' || st === 'qa') return 'testing';
+    if (st === 'done' || st === 'completed' || st === 'finished') return 'done';
+    return 'todo';
+  }
 
   FS.pages.kanban = {
     _sortables: [],
     _filter: { project: '', employee: '', department: '' },
     _tasksData: [],
+    _projectsData: [],
 
     async init() {
-      await this._loadData();
+      // 1. Instant 0ms SWR render with local seed data (NO SPINNER!)
+      this._tasksData = (FS.db.get('tasks') || []).map(t => ({
+        ...t,
+        status: normalizeStatus(t.status)
+      }));
+      this._projectsData = FS.db.get('projects') || [];
       this._populateFilters();
       this._renderBoard();
       this._bindEvents();
+
+      // 2. Fetch live data from backend API in background & sync seamlessly
+      await this._loadData();
     },
 
     async _loadData() {
       try {
-        await FS.loadUsersCache();
+        try {
+          await FS.loadUsersCache();
+        } catch (e) {
+          console.warn('loadUsersCache failed in kanban page:', e);
+        }
 
-        const response = await FS.apiCall({
-          url: FS.API_BASE + '/api/v1/tasks',
-          type: 'GET'
-        });
+        const [tasksRes, projsRes] = await Promise.all([
+          FS.apiCall({ url: FS.API_BASE + '/api/v1/tasks', type: 'GET' }),
+          FS.apiCall({ url: FS.API_BASE + '/api/v1/projects', type: 'GET' })
+        ]);
 
-        if (response && response.success && Array.isArray(response.data)) {
-          this._tasksData = response.data.map(t => ({
+        if (tasksRes && tasksRes.success && Array.isArray(tasksRes.data) && tasksRes.data.length > 0) {
+          const apiTasks = tasksRes.data.map(t => ({
             id: t.id,
             code: t.code,
             title: t.title,
@@ -45,7 +68,7 @@
             assigneeName: t.assigneeName || '',
             assigneeAvatar: t.assigneeAvatar || '',
             assigneeColor: t.assigneeColor || '',
-            status: (t.status || 'todo').toLowerCase(),
+            status: normalizeStatus(t.status),
             priority: (t.priority || 'medium').toLowerCase(),
             startDate: t.startDate,
             dueDate: t.dueDate,
@@ -56,21 +79,18 @@
           }));
           $('#kanban-offline-banner').remove();
         } else {
-          try {
-            this._tasksData = FS.db.get('tasks') || [];
-          } catch (dbErr) {
-            console.error('Failed to read tasks from local storage:', dbErr);
-            this._tasksData = [];
-          }
+          this._tasksData = FS.db.get('tasks') || [];
         }
+
+        if (projsRes && projsRes.success && Array.isArray(projsRes.data) && projsRes.data.length > 0) {
+          this._projectsData = projsRes.data;
+        } else if (!this._projectsData.length) {
+          this._projectsData = FS.db.get('projects') || [];
+        }
+
       } catch (err) {
         console.warn('Kanban Tasks API request failed:', err);
-        try {
-          this._tasksData = FS.db.get('tasks') || [];
-        } catch (dbErr) {
-          console.error('Failed to read tasks from local storage:', dbErr);
-          this._tasksData = [];
-        }
+        this._tasksData = FS.db.get('tasks') || [];
         if (!$('#kanban-offline-banner').length) {
           $('#page-content').prepend('<div id="kanban-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu tạm thời ngoại tuyến.</span></div>');
         }
@@ -78,12 +98,7 @@
     },
 
     _populateFilters() {
-      let projects = [];
-      try {
-        projects = FS.db.get('projects') || [];
-      } catch (dbErr) {
-        console.error('Failed to read projects from local storage in Kanban filters:', dbErr);
-      }
+      const projects = FS.db.get('projects') || [];
       $('#kanban-filter-project').html('<option value="">Tất cả dự án</option>' +
         projects.map(p => `<option value="${p.id}">${FS.str.escape(p.name)}</option>`).join('')
       );
@@ -217,18 +232,21 @@
         }
       }
 
-      const avatarHtml = assigneeAvatar
-        ? `<div class="fs-avatar fs-avatar-sm ${assigneeColor || 'av-indigo'}" title="${FS.str.escape(assigneeName)}">${assigneeAvatar}</div>`
-        : FS.user.avatar(task.assigneeId, 'fs-avatar-sm');
+      const avatarHtml = (FS.user && FS.user.avatar)
+        ? FS.user.avatar(task.assigneeId, 'sm', assigneeName || 'Thành viên')
+        : `<div class="fs-avatar fs-avatar-sm ${assigneeColor || 'av-indigo'}" title="${FS.str.escape(assigneeName || 'Thành viên')}">${assigneeAvatar || 'TV'}</div>`;
 
       return `
         <div class="kanban-card" data-task-id="${task.id}">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <span class="fs-small" style="color:var(--fs-accent);font-weight:600">${task.code || ''}</span>
+            ${projName ? `<span class="fs-small text-muted truncate" style="max-width:140px">${FS.str.escape(projName)}</span>` : ''}
+          </div>
           <div class="kanban-card-title">${FS.str.escape(task.title)}</div>
-          ${projName ? `<div class="fs-small mb-2" style="color:var(--fs-accent)">${FS.str.escape(projName)}</div>` : ''}
           <div class="kanban-card-meta">
             <div class="d-flex align-items-center gap-1 flex-wrap">
               ${FS.badge.priority(task.priority)}
-              ${subtasksTotal > 0 ? `<span class="fs-badge badge-neutral"><i class="bi bi-check2-square"></i>${subtasksDone}/${subtasksTotal}</span>` : ''}
+              ${subtasksTotal > 0 ? `<span class="fs-badge badge-neutral"><i class="bi bi-check2-square me-1"></i>${subtasksDone}/${subtasksTotal}</span>` : ''}
             </div>
             <div class="d-flex align-items-center gap-2">
               ${overdue ? `<i class="bi bi-clock-history" style="color:var(--fs-danger);font-size:12px" title="Quá hạn"></i>` : ''}

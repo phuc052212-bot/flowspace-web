@@ -17,6 +17,10 @@ namespace FlowSpace.Application.Common.Dtos
         public Guid OwnerId { get; set; }
         public string OwnerName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
+        public string? Client { get; set; }
+        public decimal? Budget { get; set; }
         public List<UserDto> Members { get; set; } = new List<UserDto>();
+        public int TaskCount { get; set; }
+        public int CompletedTaskCount { get; set; }
     }
 }

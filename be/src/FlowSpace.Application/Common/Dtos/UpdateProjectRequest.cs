@@ -11,5 +11,7 @@ namespace FlowSpace.Application.Common.Dtos
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public int Progress { get; set; }
+        public string? Client { get; set; }
+        public decimal? Budget { get; set; }
     }
 }

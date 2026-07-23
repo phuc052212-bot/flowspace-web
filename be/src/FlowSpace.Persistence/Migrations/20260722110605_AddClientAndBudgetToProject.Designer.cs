@@ -3,6 +3,7 @@ using System;
 using FlowSpace.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowSpace.Persistence.Migrations
 {
     [DbContext(typeof(FlowSpaceDbContext))]
-    partial class FlowSpaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260722110605_AddClientAndBudgetToProject")]
+    partial class AddClientAndBudgetToProject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -684,9 +687,6 @@ namespace FlowSpace.Persistence.Migrations
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("CompletionScore")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -695,10 +695,6 @@ namespace FlowSpace.Persistence.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
-
-                    b.Property<string>("Difficulty")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("timestamp with time zone");

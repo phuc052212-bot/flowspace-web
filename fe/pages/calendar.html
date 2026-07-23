@@ -27,21 +27,88 @@
 .fc-toolbar-title { font-size: 16px !important; font-weight: 700 !important; color: var(--fs-text) !important; }
 .fc-button {
   background: var(--fs-bg) !important;
-  border: 1.5px solid var(--fs-border) !important;
+  border: 1px solid var(--fs-border) !important;
   color: var(--fs-text-secondary) !important;
-  font-size: 12px !important;
-  border-radius: var(--fs-radius) !important;
-  padding: 5px 12px !important;
+  font-size: 13px !important;
+  border-radius: var(--fs-radius-lg) !important;
+  padding: 6px 14px !important;
   font-family: var(--fs-font) !important;
   font-weight: 500 !important;
-  transition: var(--fs-transition) !important;
-  box-shadow: none !important;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--fs-shadow-xs) !important;
 }
-.fc-button:hover { background: var(--fs-bg-tertiary) !important; color: var(--fs-accent) !important; }
-.fc-button-active, .fc-button:active {
+.fc-button:hover {
+  background: var(--fs-bg-secondary) !important;
+  color: var(--fs-text) !important;
+  border-color: var(--fs-text-muted) !important;
+}
+.fc-button-primary:not(:disabled).fc-button-active,
+.fc-button-primary:not(:disabled):active {
   background: var(--fs-accent-light) !important;
   color: var(--fs-accent) !important;
   border-color: var(--fs-accent) !important;
+}
+.fc-button-group {
+  background: var(--fs-bg-secondary) !important;
+  padding: 3px !important;
+  border-radius: var(--fs-radius-md) !important;
+  border: 1px solid var(--fs-border) !important;
+  gap: 2px !important;
+}
+.fc-button-group .fc-button {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: var(--fs-radius-sm) !important;
+}
+.fc-event {
+  border-radius: 4px !important;
+  padding: 2px 5px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease !important;
+}
+.fc-event:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.08) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 767.98px) {
+  .fc-header-toolbar {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+  .fc-toolbar-chunk {
+    display: flex !important;
+    justify-content: center !important;
+  }
+  .fc-toolbar-title {
+    font-size: 15px !important;
+  }
+  .fc .fc-view-harness {
+    min-height: 480px !important;
+  }
+  .fc .fc-timegrid-slot-label,
+  .fc .fc-timegrid-axis-frame {
+    font-size: 10px !important;
+  }
+  .fc-v-event .fc-event-title,
+  .fc-h-event .fc-event-title {
+    font-size: 10px !important;
+    font-weight: 500 !important;
+  }
+}
+
+.fc-button-group .fc-button:hover {
+  color: var(--fs-text) !important;
+}
+.fc-button-group .fc-button-active {
+  background: var(--fs-bg) !important;
+  color: var(--fs-accent) !important;
+  box-shadow: var(--fs-shadow-xs) !important;
 }
 .fc-daygrid-day-number { color: var(--fs-text-secondary) !important; font-size: 12px !important; }
 .fc-day-today { background: var(--fs-accent-light) !important; }

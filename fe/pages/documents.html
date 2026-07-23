@@ -1,8 +1,9 @@
 <!-- FlowSpace — Documents Page -->
-<div class="page-enter" id="documents-page" style="display:flex;gap:16px;min-height:calc(100vh - 200px)">
+<!-- FlowSpace — Documents Page -->
+<div class="page-enter" id="documents-page">
 
   <!-- Folder tree -->
-  <div style="width:240px;flex-shrink:0">
+  <div id="doc-sidebar-wrap">
     <div class="fs-card" style="padding:0;overflow:hidden;height:100%">
       <div style="padding:12px 14px;border-bottom:1px solid var(--fs-border);display:flex;align-items:center;justify-content:space-between">
         <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--fs-text-muted)">Thư mục</span>
@@ -15,11 +16,11 @@
   <!-- File list -->
   <div style="flex:1;min-width:0">
     <div class="fs-card" style="padding:0;overflow:hidden;height:100%">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--fs-border);display:flex;align-items:center;gap:12px">
-        <input type="text" class="fs-search-input" id="doc-search" placeholder="Tìm tài liệu..." style="flex:1;max-width:300px">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--fs-border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <input type="text" class="fs-search-input" id="doc-search" placeholder="Tìm tài liệu..." style="flex:1;min-width:140px;max-width:300px">
         <div class="ms-auto d-flex gap-2">
           <button class="btn btn-outline btn-sm" id="doc-upload-btn">
-            <i class="bi bi-cloud-upload"></i> Upload
+            <i class="bi bi-cloud-upload"></i> Tải lên
           </button>
           <button class="btn btn-primary btn-sm" id="doc-new-doc-btn">
             <i class="bi bi-plus-lg"></i> Tạo tài liệu
@@ -40,6 +41,35 @@
   </div>
 
 </div>
+
+<style>
+#documents-page {
+  display: flex;
+  gap: 16px;
+  min-height: calc(100vh - 200px);
+}
+#doc-sidebar-wrap {
+  width: 240px;
+  flex-shrink: 0;
+}
+@media (max-width: 767.98px) {
+  #documents-page {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  #doc-sidebar-wrap {
+    width: 100% !important;
+  }
+  .doc-file-card {
+    padding: 10px 8px !important;
+  }
+  .doc-file-name {
+    font-size: 12px !important;
+    line-height: 1.3 !important;
+    word-break: normal !important;
+  }
+}
+</style>
 
 <!-- Modals -->
 <div class="fs-modal-overlay" id="doc-share-modal" style="display:none">

@@ -1,8 +1,32 @@
 (function (FS) {
   "use strict";
 
-  // In-memory session holder (lost on page reload)
-  let _session = null;
+  const SESSION_KEY = "flowspace_session";
+
+  function loadSession() {
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (!stored) return null;
+      const session = JSON.parse(stored);
+      if (!session.token || (session.expiresAt && new Date(session.expiresAt) <= new Date())) {
+        sessionStorage.removeItem(SESSION_KEY);
+        return null;
+      }
+      return session;
+    } catch {
+      sessionStorage.removeItem(SESSION_KEY);
+      return null;
+    }
+  }
+
+  function persistSession() {
+    try {
+      if (_session) sessionStorage.setItem(SESSION_KEY, JSON.stringify(_session));
+    } catch { /* Keep the current-page session if storage is unavailable. */ }
+  }
+
+  // Restore the authenticated session after navigation from login.html to app.html.
+  let _session = loadSession();
 
   const ROLE_LEVELS = { employee: 1, team_lead: 2, manager: 3, director: 4 };
   const ROLE_LABELS = {
@@ -64,6 +88,7 @@
               color: authData.user.color || "#6366f1",
               loginAt: new Date().toISOString(),
             };
+            persistSession();
             return _session;
           }
           return { error: "Phản hồi đăng nhập không hợp lệ từ máy chủ." };
@@ -106,6 +131,7 @@
         }).fail(err => console.error("Backend logout failed.", err));
       }
       _session = null;
+      sessionStorage.removeItem(SESSION_KEY);
       window.location.href = "login.html";
     },
 
@@ -176,7 +202,14 @@
     isLoggedIn() { return !!_session; },
 
     /** Lấy role level của user hiện tại */
-    getRoleLevel() { return _session ? (ROLE_LEVELS[_session.role] || 0) : 0; },
+    getRoleLevel() {
+      if (!_session || !_session.role) return 1;
+      const r = String(_session.role).toLowerCase().replace(/[^a-z]/g, '');
+      if (r.includes('admin') || r.includes('director') || r.includes('giamdoc')) return 4;
+      if (r.includes('manager') || r.includes('truongphong')) return 3;
+      if (r.includes('lead') || r.includes('truongnhom')) return 2;
+      return ROLE_LEVELS[String(_session.role).toLowerCase()] || 1;
+    },
 
     /** Kiểm tra có quyền truy cập trang không */
     canAccess(page) { const required = PAGE_ACCESS[page] || 99; return this.getRoleLevel() >= required; },
@@ -203,6 +236,7 @@
       if (updates.email) _session.email = updates.email;
       if (updates.avatar) _session.avatar = updates.avatar;
       if (updates.role) _session.role = updates.role;
+      persistSession();
       return true;
     },
 

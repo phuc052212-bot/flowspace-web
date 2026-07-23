@@ -145,6 +145,16 @@
                 <div class="fs-label mb-1">Đã ghi nhận</div>
                 <div style="font-size:13px">${task.loggedHours || 0}h</div>
               </div>
+              <div>
+                <div class="fs-label mb-1">Độ khó</div>
+                <div style="font-size:13px" class="fw-semibold text-dark">${FS.str.escape(task.difficulty || '—')}</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1">Điểm đánh giá</div>
+                <div style="font-size:13px" class="fw-semibold ${task.completionScore ? 'text-success' : 'text-muted'}">
+                  ${task.completionScore ? task.completionScore + ' / 100' : 'Chưa chấm điểm'}
+                </div>
+              </div>
             </div>
 
             <!-- Progress -->

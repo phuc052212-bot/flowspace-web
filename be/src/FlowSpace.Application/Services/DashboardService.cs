@@ -53,6 +53,10 @@ namespace FlowSpace.Application.Services
 
             var pendingApprovalsCount = await requestQuery.CountAsync(r => r.Status == RequestStatus.Pending);
             var totalLoggedHours = await userTimeLogQuery.SumAsync(tl => (decimal?)tl.Hours) ?? 0m;
+            var taskStatusCounts = await userTaskQuery
+                .GroupBy(t => t.Status)
+                .Select(group => new { Status = group.Key, Count = group.Count() })
+                .ToListAsync();
 
             // 1. Lấy danh sách MyTasks chưa hoàn thành (tối đa 6 task)
             var dbTasks = await userTaskQuery
@@ -170,6 +174,13 @@ namespace FlowSpace.Application.Services
                 OverdueTasks = overdueTasks,
                 PendingApprovalsCount = pendingApprovalsCount,
                 TotalLoggedHours = totalLoggedHours,
+                TaskStatuses = new TaskStatusSummaryDto
+                {
+                    Todo = taskStatusCounts.Where(x => x.Status == TaskStatus.Todo).Select(x => x.Count).FirstOrDefault(),
+                    InProgress = taskStatusCounts.Where(x => x.Status == TaskStatus.InProgress).Select(x => x.Count).FirstOrDefault(),
+                    Review = taskStatusCounts.Where(x => x.Status == TaskStatus.Review).Select(x => x.Count).FirstOrDefault(),
+                    Done = taskStatusCounts.Where(x => x.Status == TaskStatus.Done).Select(x => x.Count).FirstOrDefault()
+                },
                 Tasks = tasksDto,
                 Projects = projectsDto,
                 Activities = activitiesDto,

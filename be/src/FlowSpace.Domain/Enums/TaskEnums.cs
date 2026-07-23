@@ -5,7 +5,9 @@ namespace FlowSpace.Domain.Enums
         Todo,
         InProgress,
         Review,
-        Done
+        Done,
+        OnHold,
+        Cancelled
     }
 
     public enum TaskPriority

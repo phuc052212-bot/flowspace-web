@@ -189,6 +189,15 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Keep the PostgreSQL schema in sync with the EF Core model on managed hosts.
+// Without this, a newly deployed model can query columns that do not yet exist
+// in Render's persistent database and authentication fails with HTTP 500.
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FlowSpace.Persistence.Contexts.FlowSpaceDbContext>();
+    dbContext.Database.Migrate();
+}
+
 // Tự động chạy Seed dữ liệu mẫu khi startup (PostgreSQL) - Tạm thời tắt để tránh quá tải RAM Render lúc khởi động
 /*
 using (var scope = app.Services.CreateScope())

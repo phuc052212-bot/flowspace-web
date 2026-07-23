@@ -21,7 +21,7 @@ namespace FlowSpace.Api.Controllers
             _currentUser = currentUser;
         }
 
-        [Authorize(Policy="approval.view")]
+        [Authorize(Policy="TeamLeadOrAbove")]
         [HttpGet("pending")]
         public async Task<ActionResult<ApiResponse<IEnumerable<RequestResponse>>>> GetPendingApprovals()
         {

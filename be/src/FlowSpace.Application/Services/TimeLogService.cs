@@ -27,6 +27,7 @@ namespace FlowSpace.Application.Services
             var query = _unitOfWork.Repository<TimeLog>().GetQueryable()
                 .Include(tl => tl.Task)
                 .Include(tl => tl.User)
+                .Include(tl => tl.Project)
                 .AsNoTracking();
 
             if (userId.HasValue)

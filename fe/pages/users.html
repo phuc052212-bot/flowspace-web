@@ -3,37 +3,53 @@
   <div class="fs-page-header">
     <div>
       <h1 class="fs-page-title">Quản lý Người dùng</h1>
-      <p class="fs-page-subtitle" id="users-count-label">Đang tải...</p>
+      <p class="fs-page-subtitle" id="users-count-label">Danh sách tài khoản & phân quyền hệ thống</p>
     </div>
   </div>
 
-  <div class="fs-filters">
-    <input type="text" class="fs-search-input" id="users-search" placeholder="Tìm người dùng...">
-    <select class="fs-filter-select" id="users-filter-role">
+  <!-- Filters Bar -->
+  <div class="fs-filters d-flex align-items-center flex-wrap gap-2 mb-3" style="padding:12px;background:var(--fs-card-bg);border:1px solid var(--fs-border);border-radius:var(--fs-radius-md)">
+    <div class="position-relative" style="min-width:200px">
+      <input type="text" class="fs-search-input" id="users-search" placeholder="Tìm người dùng..." style="height:34px;font-size:13px;padding-left:30px">
+      <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left:10px;font-size:12px"></i>
+    </div>
+    <select class="fs-filter-select" id="users-filter-role" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả vai trò</option>
       <option value="employee">Nhân viên</option>
       <option value="team_lead">Trưởng nhóm</option>
-      <option value="manager">Quản lý</option>
+      <option value="manager">Trưởng phòng</option>
       <option value="director">Ban GĐ</option>
     </select>
   </div>
 
   <div class="fs-card" style="padding:0;overflow:hidden">
-    <table class="fs-table">
-      <thead>
-        <tr>
-          <th>Người dùng</th>
-          <th>Email</th>
-          <th>Vai trò</th>
-          <th>Dự án</th>
-          <th>Tasks</th>
-          <th>Giờ làm</th>
-          <th style="width:80px">Thao tác</th>
-        </tr>
-      </thead>
-      <tbody id="users-table-body">
-        <tr><td colspan="7"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
-      </tbody>
-    </table>
+    <div class="table-responsive" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="fs-table" style="min-width:700px">
+        <thead>
+          <tr>
+            <th style="min-width:180px">Người dùng</th>
+            <th style="min-width:180px">Email</th>
+            <th style="min-width:120px">Vai trò</th>
+            <th style="min-width:80px">Dự án</th>
+            <th style="min-width:90px">Tasks</th>
+            <th style="min-width:90px">Giờ làm</th>
+            <th style="width:80px;text-align:center">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body">
+          <tr><td colspan="7"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Accessible Pagination Container -->
+  <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2" id="users-pagination-wrap">
+    <span class="fs-small text-muted" id="users-pagination-info">Đang hiển thị...</span>
+    <nav aria-label="Phân trang kết quả tìm kiếm">
+      <ul class="pagination pagination-sm m-0" id="users-pagination-ul">
+        <!-- Rendered dynamically by JS -->
+      </ul>
+    </nav>
   </div>
 </div>

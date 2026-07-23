@@ -3,29 +3,37 @@
  * Module 3: Uses FullCalendar.js connected to RESTful API (/api/v1/tasks)
  */
 (function (FS, $) {
-  'use strict';  FS.pages.calendar = {
+  'use strict'; FS.pages.calendar = {
     _calendar: null,
     _projectFilter: '',
     _tasksData: [],
 
     async init() {
-      await this._loadData();
+      // 1. Instant 0ms SWR render with local seed data (NO SPINNER!)
+      this._tasksData = FS.db.get('tasks') || [];
       this._populateFilters();
       this._renderCalendar();
       this._bindEvents();
+
+      // 2. Fetch live data from backend API in background & sync seamlessly
+      await this._loadData();
     },
 
     async _loadData() {
       try {
-        await FS.loadUsersCache();
+        try {
+          await FS.loadUsersCache();
+        } catch (e) {
+          console.warn('loadUsersCache failed in calendar page:', e);
+        }
 
         const response = await FS.apiCall({
           url: FS.API_BASE + '/api/v1/tasks',
           type: 'GET'
         });
 
-        if (response && response.success && Array.isArray(response.data)) {
-          this._tasksData = response.data.map(t => ({
+        if (response && response.success && Array.isArray(response.data) && response.data.length > 0) {
+          const apiTasks = response.data.map(t => ({
             id: t.id,
             title: t.title,
             projectId: t.projectId,
@@ -35,26 +43,26 @@
             startDate: t.startDate,
             dueDate: t.dueDate
           }));
+
+          const mergedMap = new Map();
+          const seedData = FS.db.get('tasks') || [];
+          for (const s of seedData) mergedMap.set(s.id, s);
+          for (const a of apiTasks) mergedMap.set(a.id, a);
+
+          this._tasksData = Array.from(mergedMap.values());
           $('#calendar-offline-banner').remove();
         } else {
-          try {
-            this._tasksData = FS.db.get('tasks') || [];
-          } catch (dbErr) {
-            console.error('Failed to read tasks from local storage:', dbErr);
-            this._tasksData = [];
-          }
+          this._tasksData = FS.db.get('tasks') || [];
         }
       } catch (err) {
         console.warn('Calendar API request failed, falling back to LocalStorage:', err);
-        try {
-          this._tasksData = FS.db.get('tasks') || [];
-        } catch (dbErr) {
-          console.error('Failed to read tasks from local storage:', dbErr);
-          this._tasksData = [];
-        }
+        this._tasksData = FS.db.get('tasks') || [];
         if (!$('#calendar-offline-banner').length) {
           $('#page-content').prepend('<div id="calendar-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu tạm thời ngoại tuyến.</span></div>');
         }
+      } finally {
+        this._populateFilters();
+        this._renderCalendar();
       }
     },
 
@@ -75,10 +83,10 @@
       }
 
       const statusColors = {
-        todo:        '#94a3b8',
+        todo: '#94a3b8',
         in_progress: '#6366f1',
-        review:      '#f59e0b',
-        done:        '#10b981'
+        review: '#f59e0b',
+        done: '#10b981'
       };
 
       const events = tasks
@@ -92,6 +100,7 @@
             title: t.title,
             start: t.startDate || t.dueDate,
             end: t.dueDate,
+            allDay: true,
             backgroundColor: overdue ? '#ef4444' : statusColors[t.status] || '#6366f1',
             extendedProps: { task: t, projectName: projName }
           };
@@ -125,7 +134,7 @@
       const self = this;
       this._calendar = new FullCalendar.Calendar(el, {
         locale: 'vi',
-        initialView: 'dayGridMonth',
+        initialView: window.innerWidth < 768 ? 'timeGridDay' : 'dayGridMonth',
         editable: true,
         headerToolbar: {
           left: 'prev,next today',

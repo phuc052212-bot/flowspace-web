@@ -11,5 +11,7 @@ namespace FlowSpace.Application.Common.Dtos
         public string Priority { get; set; } = "medium";
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public string? Client { get; set; }
+        public decimal? Budget { get; set; }
     }
 }

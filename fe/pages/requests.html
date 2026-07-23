@@ -3,23 +3,55 @@
   <div class="fs-page-header">
     <div>
       <h1 class="fs-page-title">Yêu cầu</h1>
-      <p class="fs-page-subtitle" id="req-count-label">Đang tải...</p>
+      <p class="fs-page-subtitle" id="req-count-label">Danh sách đơn từ yêu cầu nội bộ</p>
     </div>
     <button class="btn btn-primary btn-sm" id="req-new-btn">
       <i class="bi bi-plus-lg"></i> Tạo yêu cầu
     </button>
   </div>
 
-  <!-- Tabs -->
-  <div class="fs-tabs" id="req-tabs">
-    <button class="fs-tab active" data-tab="all">Tất cả</button>
-    <button class="fs-tab" data-tab="pending">Chờ duyệt</button>
-    <button class="fs-tab" data-tab="approved">Đã duyệt</button>
-    <button class="fs-tab" data-tab="rejected">Từ chối</button>
+  <!-- Filters Bar & Tabs -->
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+    <div class="fs-tabs m-0" id="req-tabs">
+      <button class="fs-tab active" data-tab="all">Tất cả <span class="badge rounded-pill bg-secondary ms-1" id="tab-cnt-all">0</span></button>
+      <button class="fs-tab" data-tab="pending">Chờ duyệt <span class="badge rounded-pill bg-warning text-dark ms-1" id="tab-cnt-pending">0</span></button>
+      <button class="fs-tab" data-tab="approved">Đã duyệt <span class="badge rounded-pill bg-success ms-1" id="tab-cnt-approved">0</span></button>
+      <button class="fs-tab" data-tab="rejected">Từ chối <span class="badge rounded-pill bg-danger ms-1" id="tab-cnt-rejected">0</span></button>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <div class="position-relative" style="min-width:180px">
+        <input type="text" class="fs-search-input" id="req-search" placeholder="Tìm yêu cầu..." style="height:34px;font-size:13px;padding-left:30px">
+        <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left:10px;font-size:12px"></i>
+      </div>
+      <select class="fs-filter-select" id="req-filter-type" style="height:34px;font-size:13px">
+        <option value="">Tất cả loại yêu cầu</option>
+        <option value="leave">🏖️ Nghỉ phép</option>
+        <option value="purchase">🛒 Xin mua hàng</option>
+        <option value="payment">💳 Xin thanh toán</option>
+        <option value="advance">💵 Xin tạm ứng</option>
+        <option value="device">💻 Xin cấp thiết bị</option>
+        <option value="it_support">🛠️ Xin hỗ trợ IT</option>
+        <option value="tech_support">🔧 Xin hỗ trợ KT</option>
+        <option value="repair">⚡ Đề nghị sửa chữa</option>
+        <option value="recruitment">👥 Đề nghị tuyển dụng</option>
+        <option value="budget_increase">📈 Đề nghị tăng ngân sách</option>
+      </select>
+    </div>
   </div>
 
   <div id="req-list">
-    <div class="fs-empty"><div class="fs-spinner mx-auto"></div></div>
+    <!-- Rendered dynamically by requests.js -->
+  </div>
+
+  <!-- Accessible Pagination Container -->
+  <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2" id="req-pagination-wrap">
+    <span class="fs-small text-muted" id="req-pagination-info">Hiển thị danh sách yêu cầu</span>
+    <nav aria-label="Phân trang kết quả tìm kiếm">
+      <ul class="pagination pagination-sm m-0" id="req-pagination-ul">
+        <!-- Rendered dynamically by JS -->
+      </ul>
+    </nav>
   </div>
 </div>
 
@@ -34,11 +66,37 @@
       <div class="fs-form-group">
         <label class="fs-label-text">Loại yêu cầu</label>
         <select class="fs-select" id="req-modal-type">
-          <option value="leave">Nghỉ phép</option>
-          <option value="overtime">Tăng ca</option>
-          <option value="purchase">Mua sắm</option>
-          <option value="remote">Làm remote</option>
+          <option value="leave">🏖️ Nghỉ phép</option>
+          <option value="purchase">🛒 Xin mua hàng</option>
+          <option value="payment">💳 Xin thanh toán</option>
+          <option value="advance">💵 Xin tạm ứng</option>
+          <option value="device">💻 Xin cấp thiết bị</option>
+          <option value="it_support">🛠️ Xin hỗ trợ IT</option>
+          <option value="tech_support">🔧 Xin hỗ trợ kỹ thuật</option>
+          <option value="repair">⚡ Đề nghị sửa chữa</option>
+          <option value="recruitment">👥 Đề nghị tuyển dụng</option>
+          <option value="budget_increase">📈 Đề nghị tăng ngân sách</option>
+          <option value="overtime">⏰ Tăng ca</option>
+          <option value="remote">🏠 Làm remote</option>
         </select>
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <div class="fs-form-group">
+            <label class="fs-label-text" for="req-modal-priority">Mức ưu tiên</label>
+            <select class="fs-select" id="req-modal-priority">
+              <option value="medium">Bình thường</option>
+              <option value="high">🔴 Cao (Cần gấp)</option>
+              <option value="low">Thấp</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="fs-form-group">
+            <label class="fs-label-text" for="req-modal-file">File đính kèm</label>
+            <input type="file" class="fs-input" id="req-modal-file" style="padding:5px 8px;font-size:12px">
+          </div>
+        </div>
       </div>
       <div class="fs-form-group">
         <label class="fs-label-text" for="req-modal-title">Tiêu đề</label>
@@ -46,7 +104,7 @@
       </div>
       <div class="fs-form-group">
         <label class="fs-label-text" for="req-modal-desc">Chi tiết</label>
-        <textarea class="fs-textarea" id="req-modal-desc" rows="4" placeholder="Mô tả chi tiết yêu cầu, lý do, thời gian..."></textarea>
+        <textarea class="fs-textarea" id="req-modal-desc" rows="3" placeholder="Mô tả chi tiết yêu cầu, lý do, thời gian..."></textarea>
       </div>
     </div>
     <div class="fs-modal-footer">

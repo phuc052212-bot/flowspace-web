@@ -12,8 +12,8 @@
     _slaSettings: [],
     _notificationTemplates: [],
 
-    init() {
-      // 1. Cài đặt cá nhân mặc định
+    async init() {
+      // 1. Cài đặt cá nhân mặc định (Instant 0ms SWR render)
       this._renderProfile();
       this._renderNotifToggles();
       this._loadThemeState();
@@ -30,6 +30,14 @@
 
       // Hiển thị tab mặc định
       this._switchTab(this._activeTab);
+
+      // 5. Cập nhật cache người dùng từ Backend API trong background
+      try {
+        await FS.loadUsersCache();
+        this._renderProfile();
+      } catch (e) {
+        console.warn('loadUsersCache failed in settings page:', e);
+      }
     },
 
     _checkPermissions() {
@@ -187,14 +195,14 @@
 
       $('#cat-list-body').html(list.map(item => `
         <tr class="hover-row">
-          <td style="font-family:monospace;font-size:12px;color:var(--fs-text-muted)">${item.id}</td>
-          <td style="font-weight:500">${FS.str.escape(item.name)}</td>
+          <td><span class="fs-badge badge-neutral" style="font-family:monospace;font-size:11px;padding:2px 6px">${item.id}</span></td>
+          <td style="font-weight:500;font-size:13px">${FS.str.escape(item.name)}</td>
           <td style="text-align:right">
             <button class="btn btn-ghost btn-icon btn-sm cat-edit-btn" data-id="${item.id}" title="Sửa">
-              <i class="bi bi-pencil"></i>
+              <i class="bi bi-pencil" style="color:var(--fs-primary);font-size:12px"></i>
             </button>
             <button class="btn btn-ghost btn-icon btn-sm cat-delete-btn" data-id="${item.id}" title="Xoá">
-              <i class="bi bi-trash text-danger"></i>
+              <i class="bi bi-trash3" style="color:var(--fs-danger);font-size:12px"></i>
             </button>
           </td>
         </tr>`).join(''));

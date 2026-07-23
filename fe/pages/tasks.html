@@ -7,9 +7,18 @@
   <div class="fs-page-header">
     <div>
       <h1 class="fs-page-title">Quản lý Công việc</h1>
-      <p class="fs-page-subtitle" id="tasks-count-label">Đang tải...</p>
+      <p class="fs-page-subtitle" id="tasks-count-label">Danh sách công việc đang xử lý</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 align-items-center" id="tasks-header-actions">
+      <!-- Toggle view -->
+      <div class="fs-view-toggle-group">
+        <button class="view-toggle active" data-view="list" title="Danh sách">
+          <i class="bi bi-list-ul"></i>
+        </button>
+        <button class="view-toggle" data-view="card" title="Thẻ">
+          <i class="bi bi-grid-3x3-gap"></i>
+        </button>
+      </div>
       <button class="btn btn-primary btn-sm" id="task-new-btn">
         <i class="bi bi-plus-lg"></i> Tạo công việc
       </button>
@@ -17,57 +26,76 @@
   </div>
 
   <!-- Filters -->
-  <div class="fs-filters">
-    <input type="text" class="fs-search-input" id="task-search" placeholder="Tìm công việc...">
-    <select class="fs-filter-select" id="task-filter-status">
+  <div class="fs-filters d-flex align-items-center flex-wrap gap-2 mb-3" style="padding:12px;background:var(--fs-card-bg);border:1px solid var(--fs-border);border-radius:var(--fs-radius-md)">
+    <div class="position-relative flex-grow-1" style="min-width:160px;max-width:220px">
+      <input type="text" class="fs-search-input" id="task-search" placeholder="Tìm công việc..." style="height:34px;font-size:13px;padding-left:30px">
+      <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left:10px;font-size:12px"></i>
+    </div>
+    <select class="fs-filter-select" id="task-filter-status" style="height:34px;font-size:13px;min-width:130px">
       <option value="">Tất cả trạng thái</option>
       <option value="todo">Chưa bắt đầu</option>
-      <option value="in_progress">Đang làm</option>
-      <option value="review">Chờ duyệt</option>
-      <option value="done">Hoàn thành</option>
+      <option value="inprogress">Đang thực hiện</option>
+      <option value="onhold">Đang chờ</option>
+      <option value="done">Đã hoàn thành</option>
+      <option value="cancelled">Đã hủy</option>
     </select>
-    <select class="fs-filter-select" id="task-filter-priority">
+    <select class="fs-filter-select" id="task-filter-priority" style="height:34px;font-size:13px;min-width:120px">
       <option value="">Tất cả ưu tiên</option>
       <option value="high">Cao</option>
       <option value="medium">Trung bình</option>
       <option value="low">Thấp</option>
     </select>
-    <select class="fs-filter-select" id="task-filter-project">
+    <select class="fs-filter-select" id="task-filter-project" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả dự án</option>
     </select>
-    <select class="fs-filter-select" id="task-filter-assignee">
+    <select class="fs-filter-select" id="task-filter-assignee" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả người thực hiện</option>
     </select>
-    <button class="btn btn-ghost btn-sm" id="task-filter-reset" style="color:var(--fs-text-muted)">
+    <button class="btn btn-ghost btn-sm" id="task-filter-reset" style="color:var(--fs-text-muted);height:34px">
       <i class="bi bi-x-circle"></i> Xoá lọc
     </button>
   </div>
 
-  <!-- Tasks Table -->
-  <div class="fs-card" style="padding:0;overflow:hidden">
-    <table class="fs-table" id="tasks-table">
-      <thead>
-        <tr>
-          <th style="width:40px"></th>
-          <th>Tiêu đề</th>
-          <th>Dự án</th>
-          <th>Người thực hiện</th>
-          <th>Độ ưu tiên</th>
-          <th>Trạng thái</th>
-          <th>Hạn hoàn thành</th>
-          <th style="width:60px">Thao tác</th>
-        </tr>
-      </thead>
-      <tbody id="tasks-table-body">
-        <tr><td colspan="8"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
-      </tbody>
-    </table>
+  <!-- List View -->
+  <div id="tasks-list-view">
+    <div class="fs-card" style="padding:0;overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="fs-table" id="tasks-table" style="min-width:760px">
+          <thead>
+            <tr>
+              <th style="width:40px"></th>
+              <th>Tiêu đề</th>
+              <th>Dự án</th>
+              <th>Người thực hiện</th>
+              <th>Độ ưu tiên</th>
+              <th>Trạng thái</th>
+              <th>Hạn hoàn thành</th>
+              <th style="width:60px">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-table-body">
+            <tr><td colspan="8"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex align-items-center justify-content-between mt-3">
-    <span class="fs-small" id="tasks-pagination-info"></span>
-    <div class="d-flex gap-1" id="tasks-pagination-btns"></div>
+  <!-- Card View -->
+  <div id="tasks-card-view" class="d-none">
+    <div class="row g-3 mb-3" id="tasks-card-grid">
+      <!-- Rendered dynamically -->
+    </div>
+  </div>
+
+  <!-- Accessible Pagination Container -->
+  <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2" id="tasks-pagination-wrap">
+    <span class="fs-small text-muted" id="tasks-pagination-info">Đang hiển thị...</span>
+    <nav aria-label="Phân trang kết quả tìm kiếm">
+      <ul class="pagination pagination-sm m-0" id="tasks-pagination-ul">
+        <!-- Rendered dynamically by JS -->
+      </ul>
+    </nav>
   </div>
 
 </div>
@@ -110,9 +138,10 @@
           <label class="fs-label-text" for="task-modal-status">Trạng thái</label>
           <select class="fs-select" id="task-modal-status">
             <option value="todo">Chưa bắt đầu</option>
-            <option value="in_progress">Đang làm</option>
-            <option value="review">Chờ duyệt</option>
-            <option value="done">Hoàn thành</option>
+            <option value="inprogress">Đang thực hiện</option>
+            <option value="onhold">Đang chờ</option>
+            <option value="done">Đã hoàn thành</option>
+            <option value="cancelled">Đã hủy</option>
           </select>
         </div>
         <div class="col-6 fs-form-group">
@@ -126,6 +155,19 @@
         <div class="col-6 fs-form-group">
           <label class="fs-label-text" for="task-modal-est">Ước tính (giờ)</label>
           <input type="number" class="fs-input" id="task-modal-est" placeholder="0" min="0">
+        </div>
+        <div class="col-6 fs-form-group">
+          <label class="fs-label-text" for="task-modal-difficulty">Độ khó</label>
+          <select class="fs-select" id="task-modal-difficulty">
+            <option value="">— Chọn độ khó —</option>
+            <option value="Dễ">Dễ</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Khó">Khó</option>
+          </select>
+        </div>
+        <div class="col-6 fs-form-group">
+          <label class="fs-label-text" for="task-modal-score">Điểm hoàn thành (0-100)</label>
+          <input type="number" class="fs-input" id="task-modal-score" placeholder="Chưa đánh giá" min="0" max="100">
         </div>
       </div>
     </div>

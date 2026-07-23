@@ -3,7 +3,8 @@
   "builds": [
     { "src": "fe/**/*.html", "use": "@vercel/static" },
     { "src": "fe/**/*.js",   "use": "@vercel/static" },
-    { "src": "fe/**/*.css",  "use": "@vercel/static" }
+    { "src": "fe/**/*.css",  "use": "@vercel/static" },
+    { "src": "fe/assets/**/*", "use": "@vercel/static" }
   ],
   "routes": [
     {
@@ -11,6 +12,7 @@
       "dest": "https://flowspace-backend-7ql5.onrender.com/api/$1",
       "methods": ["GET","POST","PUT","DELETE","PATCH"]
     },
-    { "src": "/(.*)", "dest": "/$1" }
+    { "src": "/", "dest": "/fe/index.html" },
+    { "src": "/(.*)", "dest": "/fe/$1" }
   ]
 }

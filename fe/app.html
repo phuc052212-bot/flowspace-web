@@ -14,6 +14,7 @@
   <!-- FlowSpace CSS -->
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 
 <body>
@@ -31,62 +32,60 @@
         <span class="fs-sidebar-brand-name">FlowSpace</span>
       </div>
 
-
-
       <!-- Navigation -->
       <div class="fs-sidebar-nav" id="fs-nav">
 
         <!-- Main section -->
         <div class="fs-sidebar-section">Tổng quan</div>
-        <button class="fs-nav-item" data-page="dashboard" title="Dashboard">
+        <button class="fs-nav-item" data-page="dashboard" title="Dashboard" tabindex="0" role="menuitem">
           <i class="bi bi-grid-1x2"></i>
           <span class="nav-label">Dashboard</span>
         </button>
 
         <div class="fs-sidebar-section">Công việc</div>
-        <button class="fs-nav-item" data-page="projects" title="Dự án">
+        <button class="fs-nav-item" data-page="projects" title="Dự án" tabindex="0" role="menuitem">
           <i class="bi bi-folder2-open"></i>
           <span class="nav-label">Dự án</span>
         </button>
-        <div id="sidebar-project-items" class="ps-3 pe-2 my-1" style="display:none"></div>
-        <button class="fs-nav-item" data-page="tasks" title="Công việc">
+        <button class="fs-nav-item" data-page="tasks" title="Công việc" tabindex="0" role="menuitem">
           <i class="bi bi-check-square"></i>
           <span class="nav-label">Công việc</span>
         </button>
-        <button class="fs-nav-item" data-page="kanban" title="Kanban">
+        <button class="fs-nav-item" data-page="kanban" title="Kanban" tabindex="0" role="menuitem">
           <i class="bi bi-kanban"></i>
           <span class="nav-label">Kanban</span>
         </button>
-        <button class="fs-nav-item fs-nav-gantt" data-page="gantt" title="Gantt">
+        <button class="fs-nav-item fs-nav-gantt" data-page="gantt" title="Gantt" tabindex="0" role="menuitem">
           <i class="bi bi-bar-chart-steps"></i>
           <span class="nav-label">Gantt Chart</span>
         </button>
-        <button class="fs-nav-item" data-page="calendar" title="Lịch">
+        <button class="fs-nav-item" data-page="calendar" title="Lịch" tabindex="0" role="menuitem">
           <i class="bi bi-calendar3"></i>
           <span class="nav-label">Lịch</span>
         </button>
-        <button class="fs-nav-item" data-page="timetracking" title="Time Tracking">
+        <button class="fs-nav-item" data-page="timetracking" title="Time Tracking" tabindex="0" role="menuitem">
           <i class="bi bi-stopwatch"></i>
           <span class="nav-label">Time Tracking</span>
         </button>
 
         <div class="fs-sidebar-section">Cộng tác</div>
-        <button class="fs-nav-item" data-page="chat" title="Chat">
+        <button class="fs-nav-item" data-page="chat" title="Chat" tabindex="0" role="menuitem">
           <i class="bi bi-chat-dots"></i>
           <span class="nav-label">Chat nội bộ</span>
           <span class="nav-badge" id="nav-chat-badge" style="display:none">3</span>
         </button>
-        <button class="fs-nav-item" data-page="documents" title="Tài liệu">
+        <button class="fs-nav-item" data-page="documents" title="Tài liệu" tabindex="0" role="menuitem">
           <i class="bi bi-file-earmark-text"></i>
           <span class="nav-label">Tài liệu</span>
         </button>
 
         <div class="fs-sidebar-section">Yêu cầu</div>
-        <button class="fs-nav-item" data-page="requests" title="Yêu cầu">
+        <button class="fs-nav-item" data-page="requests" title="Yêu cầu" tabindex="0" role="menuitem">
           <i class="bi bi-send"></i>
           <span class="nav-label">Yêu cầu</span>
         </button>
-        <button class="fs-nav-item fs-nav-approvals" data-page="approvals" title="Phê duyệt">
+        <button class="fs-nav-item fs-nav-approvals" data-page="approvals" title="Phê duyệt" tabindex="0"
+          role="menuitem">
           <i class="bi bi-shield-check"></i>
           <span class="nav-label">Phê duyệt</span>
           <span class="nav-badge" id="nav-approval-badge" style="display:none">2</span>
@@ -94,19 +93,19 @@
 
         <!-- Admin section — shown by role -->
         <div class="fs-sidebar-section fs-admin-section">Quản trị</div>
-        <button class="fs-nav-item fs-nav-reports" data-page="reports" title="Báo cáo">
+        <button class="fs-nav-item fs-nav-reports" data-page="reports" title="Báo cáo" tabindex="0" role="menuitem">
           <i class="bi bi-bar-chart-line"></i>
           <span class="nav-label">Báo cáo</span>
         </button>
-        <button class="fs-nav-item fs-nav-users" data-page="users" title="Người dùng">
+        <button class="fs-nav-item fs-nav-users" data-page="users" title="Người dùng" tabindex="0" role="menuitem">
           <i class="bi bi-people"></i>
           <span class="nav-label">Người dùng</span>
         </button>
-        <button class="fs-nav-item fs-nav-logs" data-page="logs" title="Nhật ký">
+        <button class="fs-nav-item fs-nav-logs" data-page="logs" title="Nhật ký" tabindex="0" role="menuitem">
           <i class="bi bi-journal-text"></i>
           <span class="nav-label">Nhật ký</span>
         </button>
-        <button class="fs-nav-item fs-nav-settings" data-page="settings" title="Cài đặt">
+        <button class="fs-nav-item fs-nav-settings" data-page="settings" title="Cài đặt" tabindex="0" role="menuitem">
           <i class="bi bi-gear"></i>
           <span class="nav-label">Cài đặt</span>
         </button>
@@ -115,12 +114,16 @@
 
       <!-- Footer -->
       <div class="fs-sidebar-footer">
-        <button class="fs-sidebar-collapse-btn" id="fs-sidebar-toggle" title="Thu/mở sidebar">
-          <i class="bi bi-layout-sidebar-reverse" id="sidebar-toggle-icon"></i>
-        </button>
-        <button class="btn btn-ghost btn-icon btn-sm" id="fs-logout-btn" title="Đăng xuất">
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
+        <div class="fs-sidebar-footer-actions">
+          <button class="fs-sidebar-action-btn" id="fs-sidebar-toggle" title="Thu/mở sidebar" tabindex="0"
+            aria-label="Thu/mở sidebar">
+            <i class="bi bi-layout-sidebar-reverse" id="sidebar-toggle-icon"></i>
+          </button>
+          <button class="fs-sidebar-action-btn danger" id="fs-logout-btn" title="Đăng xuất" tabindex="0"
+            aria-label="Đăng xuất">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </div>
       </div>
 
     </nav><!-- /fs-sidebar -->
@@ -144,68 +147,86 @@
 
           <!-- Breadcrumb -->
           <div class="fs-topbar-breadcrumb">
-            <i class="bi bi-house" style="font-size:13px"></i>
-            <i class="bi bi-chevron-right" style="font-size:10px;opacity:0.5"></i>
+            <i class="bi bi-house fs-breadcrumb-icon" aria-hidden="true"></i>
+            <i class="bi bi-chevron-right fs-breadcrumb-separator" aria-hidden="true"></i>
             <span class="current" id="fs-page-title">Dashboard</span>
           </div>
-
-          <!-- Search trigger -->
-          <button class="fs-topbar-search ms-3" id="fs-search-trigger" aria-label="Tìm kiếm">
-            <i class="bi bi-search" style="font-size:13px"></i>
-            <span>Tìm kiếm...</span>
-            <kbd class="fs-search-shortcut">Ctrl K</kbd>
-          </button>
 
         </div>
 
         <!-- Topbar actions -->
         <div class="fs-topbar-actions">
 
+          <!-- Search trigger -->
+          <button class="fs-topbar-search" id="fs-search-trigger" type="button" aria-label="Tìm kiếm (Ctrl+K)"
+            aria-controls="fs-search-modal" tabindex="0">
+            <i class="bi bi-search fs-search-icon"></i>
+            <span class="fs-search-placeholder">Tìm kiếm task, dự án, người dùng...</span>
+            <kbd class="fs-search-shortcut"><span>Ctrl</span><span>K</span></kbd>
+          </button>
+
+          <div class="fs-topbar-divider"></div>
+
           <!-- Notifications -->
-          <button class="fs-topbar-btn" id="fs-notif-btn" aria-label="Thông báo" aria-expanded="false">
+          <button class="fs-topbar-btn" id="fs-notif-btn" type="button" aria-label="Thông báo"
+            aria-controls="fs-notif-dropdown" aria-expanded="false" aria-haspopup="dialog">
             <i class="bi bi-bell"></i>
-            <span class="fs-topbar-badge count" id="fs-notif-badge" style="display:none">0</span>
+            <span class="fs-topbar-badge count" id="fs-notif-badge" hidden>0</span>
+            <span class="fs-topbar-indicator" id="fs-notif-indicator" hidden></span>
           </button>
 
           <div class="fs-topbar-divider"></div>
 
           <!-- User avatar -->
-          <div class="fs-topbar-user fs-dropdown" id="fs-topbar-user">
-            <div class="fs-avatar fs-avatar-sm" id="topbar-user-avatar">?</div>
-            <span class="fs-topbar-user-name d-none d-md-inline" id="topbar-user-name">—</span>
-            <i class="bi bi-chevron-down" style="font-size:11px;color:var(--fs-text-muted)"></i>
-            <!-- User dropdown -->
-            <div class="fs-dropdown-menu" id="fs-user-menu">
-              <div class="fs-dropdown-header" id="user-menu-email">—</div>
+          <div class="fs-topbar-profile">
+            <button class="fs-topbar-user" id="fs-topbar-user" type="button" aria-controls="fs-user-menu"
+              aria-haspopup="menu" aria-expanded="false">
+              <div class="fs-avatar-wrapper">
+                <div class="fs-avatar fs-avatar-sm" id="topbar-user-avatar">?</div>
+                <span class="fs-online-indicator" id="user-online-indicator"></span>
+              </div>
+              <div class="fs-user-info d-none d-md-flex">
+                <span class="fs-topbar-user-name" id="topbar-user-name">—</span>
+                <span class="fs-user-role" id="user-role-label">—</span>
+              </div>
+              <i class="bi bi-chevron-down fs-chevron-icon"></i>
+            </button>
+            <div class="fs-dropdown-menu" id="fs-user-menu" role="menu" aria-hidden="true">
+              <div class="fs-dropdown-user-header">
+                <div class="fs-dropdown-avatar" id="dropdown-user-avatar">?</div>
+                <div class="fs-dropdown-user-details">
+                  <div class="fs-dropdown-user-name" id="dropdown-user-name">—</div>
+                  <div class="fs-dropdown-user-email" id="user-menu-email">—</div>
+                  <span class="fs-dropdown-user-role" id="dropdown-user-role">—</span>
+                </div>
+              </div>
               <div class="fs-dropdown-divider"></div>
-              <button class="fs-dropdown-item" data-page="settings">
-                <i class="bi bi-person-circle"></i> Hồ sơ cá nhân
-              </button>
-              <button class="fs-dropdown-item" data-page="settings">
+              <button class="fs-dropdown-item" data-page="settings" role="menuitem">
                 <i class="bi bi-gear"></i> Cài đặt
               </button>
               <div class="fs-dropdown-divider"></div>
-              <button class="fs-dropdown-item danger" id="user-logout-btn">
+              <button class="fs-dropdown-item danger" id="user-logout-btn" role="menuitem">
                 <i class="bi bi-box-arrow-right"></i> Đăng xuất
               </button>
             </div>
           </div>
-
         </div>
       </header>
 
       <!-- ── Notification Dropdown ─────────────────────── -->
-      <div id="fs-notif-dropdown" role="region" aria-label="Thông báo">
+      <div id="fs-notif-dropdown" role="dialog" aria-label="Thông báo" aria-hidden="true" class="fs-dropdown-panel">
         <div class="notif-header">
-          <h6>Thông báo</h6>
-          <button class="btn btn-ghost btn-xs" id="fs-notif-mark-all">Đọc tất cả</button>
+          <div class="notif-header-left">
+            <h6>Thông báo</h6>
+            <span class="notif-unread-count" id="notif-unread-count" hidden>0 chưa đọc</span>
+          </div>
+          <div class="notif-header-actions">
+            <button class="btn btn-ghost btn-xs" id="fs-notif-mark-all" type="button" title="Đánh dấu tất cả là đã đọc">
+              <i class="bi bi-check2-all"></i> Đọc tất cả
+            </button>
+          </div>
         </div>
-        <div class="notif-list" id="fs-notif-list">
-          <!-- Rendered by JS -->
-        </div>
-        <div class="notif-footer">
-          <a href="#" id="fs-notif-view-all">Xem tất cả thông báo</a>
-        </div>
+        <div class="notif-list" id="fs-notif-list" tabindex="0" aria-live="polite"></div>
       </div>
 
       <!-- ── Page Content ──────────────────────────────── -->
@@ -218,13 +239,13 @@
   </div><!-- /fs-app -->
 
   <!-- ── Global Search Modal ────────────────────────────────── -->
-  <div id="fs-search-modal" role="dialog" aria-modal="true" aria-label="Tìm kiếm">
+  <div id="fs-search-modal" role="dialog" aria-modal="true" aria-label="Tìm kiếm" aria-hidden="true">
     <div class="fs-search-dialog">
       <div class="fs-search-input-wrap">
         <i class="bi bi-search"></i>
         <input type="text" id="fs-search-input-main" class="fs-search-input-main"
           placeholder="Tìm kiếm task, dự án, tài liệu, người dùng..." autocomplete="off">
-        <button class="btn btn-ghost btn-xs" onclick="$('#fs-search-modal').removeClass('show')">
+        <button class="btn btn-ghost btn-xs" id="fs-search-close" type="button" aria-label="Đóng tìm kiếm">
           <kbd class="fs-key">Esc</kbd>
         </button>
       </div>
@@ -241,7 +262,7 @@
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- SignalR Client CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/microsoft-signalr/8.0.0/signalr.min.js"></script>
   <!-- jQuery -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <!-- Bootstrap JS -->
@@ -263,29 +284,31 @@
   <script src="js/core/utils.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/notifications.js"></script>
-  <script src="js/core/seed-data.js"></script>
 
   <!-- FlowSpace Components -->
-  <script src="js/components/task-detail.js"></script>
-  <script src="js/components/project-detail.js"></script>
-  <script src="js/components/search-modal.js"></script>
+  <script src="js/components/task-detail.js?v=3"></script>
+  <script src="js/components/project-detail.js?v=3"></script>
+  <script src="js/components/header-search.js?v=3"></script>
+  <script src="js/components/notification-center.js?v=3"></script>
+  <script src="js/components/user-profile-menu.js?v=3"></script>
+  <script src="js/components/header-bootstrap.js?v=3"></script>
 
   <!-- FlowSpace Pages -->
-  <script src="js/pages/dashboard.js"></script>
-  <script src="js/pages/projects.js"></script>
-  <script src="js/pages/tasks.js"></script>
-  <script src="js/pages/kanban.js"></script>
-  <script src="js/pages/gantt.js?v=2"></script>
-  <script src="js/pages/calendar.js"></script>
-  <script src="js/pages/documents.js"></script>
-  <script src="js/pages/chat.js"></script>
-  <script src="js/pages/requests.js"></script>
-  <script src="js/pages/approvals.js"></script>
-  <script src="js/pages/timetracking.js"></script>
-  <script src="js/pages/reports.js"></script>
-  <script src="js/pages/users.js"></script>
-  <script src="js/pages/logs.js"></script>
-  <script src="js/pages/settings.js"></script>
+  <script src="js/pages/dashboard.js?v=3"></script>
+  <script src="js/pages/projects.js?v=3"></script>
+  <script src="js/pages/tasks.js?v=3"></script>
+  <script src="js/pages/kanban.js?v=3"></script>
+  <script src="js/pages/gantt.js?v=3"></script>
+  <script src="js/pages/calendar.js?v=3"></script>
+  <script src="js/pages/documents.js?v=3"></script>
+  <script src="js/pages/chat.js?v=3"></script>
+  <script src="js/pages/requests.js?v=3"></script>
+  <script src="js/pages/approvals.js?v=3"></script>
+  <script src="js/pages/timetracking.js?v=3"></script>
+  <script src="js/pages/reports.js?v=3"></script>
+  <script src="js/pages/users.js?v=3"></script>
+  <script src="js/pages/logs.js?v=3"></script>
+  <script src="js/pages/settings.js?v=3"></script>
 
   <!-- App Init -->
   <script>
@@ -299,19 +322,6 @@
       if (!FS.auth.guard()) return;
 
       // 3. Lấy session và populate UI
-      const session = FS.auth.getSession();
-
-      // Topbar user info
-      const $topbarAvatar = $('#topbar-user-avatar');
-      $topbarAvatar.text(session.avatar);
-      if (session.color && session.color.startsWith('#')) {
-        $topbarAvatar.css('background-color', session.color);
-      } else {
-        $topbarAvatar.addClass(session.color || 'av-indigo');
-      }
-      $('#topbar-user-name').text(session.name.split(' ').pop()); // Last name only
-      $('#user-menu-email').text(session.email);
-
       // 4. Apply role-based menu visibility
       const level = FS.auth.getRoleLevel();
 
@@ -334,103 +344,13 @@
         }
       }
 
-      // 5. Sidebar collapse/expand
-      const sidebarState = sessionStorage.getItem('fs_sidebar_collapsed');
-      if (sidebarState === '1') {
-        $('#fs-sidebar').addClass('collapsed');
-        $('#sidebar-toggle-icon').removeClass('bi-layout-sidebar-reverse').addClass('bi-layout-sidebar');
-      }
-
-      $('#fs-sidebar-toggle').on('click', function () {
-        const $sidebar = $('#fs-sidebar');
-        $sidebar.toggleClass('collapsed');
-        const collapsed = $sidebar.hasClass('collapsed');
-        sessionStorage.setItem('fs_sidebar_collapsed', collapsed ? '1' : '0');
-        const $icon = $('#sidebar-toggle-icon');
-        if (collapsed) {
-          $icon.removeClass('bi-layout-sidebar-reverse').addClass('bi-layout-sidebar');
-        } else {
-          $icon.removeClass('bi-layout-sidebar').addClass('bi-layout-sidebar-reverse');
-        }
-      });
-
-      // 6. Mobile sidebar
-      $('#fs-mobile-menu-btn').on('click', function () {
-        $('#fs-sidebar').toggleClass('mobile-open');
-        $('#fs-sidebar-overlay').toggleClass('show');
-      });
-      $('#fs-sidebar-overlay').on('click', function () {
-        $('#fs-sidebar').removeClass('mobile-open');
-        $(this).removeClass('show');
-      });
-
-      // 7. Topbar user dropdown toggle
-      $('#fs-topbar-user').on('click', function (e) {
-        e.stopPropagation();
-        $('#fs-user-menu').toggleClass('show');
-      });
-
-      // 7b. User dropdown menu items → navigate (force reload if already on same page)
-      $(document).on('click', '.fs-dropdown-item[data-page]', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const page = $(this).data('page');
-        $('#fs-user-menu').removeClass('show');
-        if (page) {
-          FS.router.go(page, { force: true });
-        }
-      });
-
-      // 7c. Close user dropdown when clicking outside
-      $(document).on('click', function (e) {
-        if (!$(e.target).closest('#fs-topbar-user, #fs-user-menu').length) {
-          $('#fs-user-menu').removeClass('show');
-        }
-      });
-
-      // 7d. Sidebar user click → go to Settings profile
-      // Sidebar user click handler removed (no sidebar user block)
-
-      // 8. Logout (both sidebar button and dropdown item)
-      $('#fs-logout-btn, #user-logout-btn').on('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        $('#fs-user-menu').removeClass('show');
-        FS.confirm('Bạn chắc chắn muốn đăng xuất?', () => FS.auth.logout(), {
-          title: 'Đăng xuất',
-          confirmText: 'Đăng xuất',
-          danger: false
-        });
-      });
-
-      // 9. Notifications
-      FS.notifModule.init();
-
-      // 10. Search
-      FS.searchModule.init();
-
-      // 10b. Dynamic Sidebar Projects Sync
-      if (FS.syncSidebarProjects) {
-        FS.syncSidebarProjects();
-      }
-      $(document).on('click', '.proj-sub-item', function (e) {
-        e.preventDefault();
-        const projId = $(this).data('proj-id');
-        if (projId && FS.projectDetail) {
-          FS.projectDetail.open(projId);
-        }
-      });
-
-      // 11. Init router → load first page
+      // 5. Khởi tạo router
       FS.router.init();
 
-      // 12. Initialize Lucide Icons
-      if (window.lucide) {
-        lucide.createIcons();
-      }
+      // 6. Bind sidebar project list
+      FS.syncSidebarProjects();
     });
   </script>
-
 </body>
 
 </html>

@@ -43,21 +43,21 @@
           <div class="fs-card-header">
             <h6 class="fs-h6 m-0"><i class="bi bi-person-circle me-2" style="color:var(--fs-accent)"></i>Hồ sơ</h6>
           </div>
-          <div style="text-align:center;padding:16px 0">
-            <div class="fs-avatar" id="settings-avatar" style="width:72px;height:72px;font-size:28px;margin:0 auto 12px">?</div>
-            <div style="font-weight:700;font-size:16px" id="settings-name">—</div>
-            <div class="fs-small mb-1" id="settings-email">—</div>
+          <div style="text-align:center;padding:12px 0 16px">
+            <div class="fs-avatar" id="settings-avatar" style="width:72px;height:72px;font-size:26px;margin:0 auto 10px;box-shadow:0 0 0 4px var(--fs-accent-light)">?</div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:2px" id="settings-name">—</div>
+            <div class="fs-small text-muted mb-2" id="settings-email">—</div>
             <div id="settings-role-badge"></div>
           </div>
-          <div class="fs-form-group mt-2">
+          <div class="fs-form-group mb-3">
             <label class="fs-label-text">Hiển thị tên</label>
             <input type="text" class="fs-input" id="settings-display-name" placeholder="Tên hiển thị">
           </div>
-          <div class="fs-form-group mt-2">
+          <div class="fs-form-group mb-3">
             <label class="fs-label-text">Email</label>
             <input type="email" class="fs-input" id="settings-user-email" placeholder="Email">
           </div>
-          <button class="btn btn-primary btn-sm w-100" id="settings-save-profile">
+          <button class="btn btn-primary btn-sm w-100 mt-1" id="settings-save-profile">
             <i class="bi bi-check2"></i> Lưu hồ sơ
           </button>
           
@@ -90,12 +90,12 @@
           </div>
           <div class="fs-form-group">
             <label class="fs-label-text">Chế độ</label>
-            <div class="d-flex gap-2 mt-1">
-              <button class="btn btn-outline btn-sm flex-1 theme-btn active" data-theme="light" id="theme-light-btn">
-                <i class="bi bi-sun"></i> Sáng
+            <div class="fs-view-toggle-group mt-1 w-100" style="padding:3px;background:var(--fs-bg-secondary);border:1px solid var(--fs-border);border-radius:var(--fs-radius-full);display:flex">
+              <button class="fs-view-toggle-btn theme-btn active" data-theme="light" id="theme-light-btn" style="flex:1;padding:6px 12px;border:none;border-radius:var(--fs-radius-full);font-size:13px;font-weight:500;transition:all 0.2s">
+                <i class="bi bi-sun me-1"></i> Sáng
               </button>
-              <button class="btn btn-outline btn-sm flex-1 theme-btn" data-theme="dark" id="theme-dark-btn">
-                <i class="bi bi-moon"></i> Tối
+              <button class="fs-view-toggle-btn theme-btn" data-theme="dark" id="theme-dark-btn" style="flex:1;padding:6px 12px;border:none;border-radius:var(--fs-radius-full);font-size:13px;font-weight:500;transition:all 0.2s">
+                <i class="bi bi-moon me-1"></i> Tối
               </button>
             </div>
           </div>
@@ -168,8 +168,8 @@
         <div class="fs-card">
           <div class="fs-card-header d-flex justify-content-between align-items-center">
             <h6 class="fs-h6 m-0" id="cat-list-title">Danh sách mục</h6>
-            <button class="btn btn-outline btn-xs" id="cat-add-btn">
-              <i class="bi bi-plus-lg"></i> Thêm mục
+            <button class="btn btn-primary btn-sm" id="cat-add-btn">
+              <i class="bi bi-plus-lg me-1"></i> Thêm mục
             </button>
           </div>
           <div style="border:1.5px solid var(--fs-border);border-radius:var(--fs-radius);overflow:hidden">

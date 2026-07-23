@@ -10,11 +10,25 @@
       "dest": "/app.html"
     },
     {
-      "src": "/js/core/auth.js",
+      "src": "/js/core/(.*)",
       "headers": {
-        "cache-control": "no-store"
+        "cache-control": "no-store, no-cache, must-revalidate"
       },
-      "dest": "/js/core/auth.js"
+      "dest": "/js/core/$1"
+    },
+    {
+      "src": "/js/pages/(.*)",
+      "headers": {
+        "cache-control": "no-store, no-cache, must-revalidate"
+      },
+      "dest": "/js/pages/$1"
+    },
+    {
+      "src": "/js/components/(.*)",
+      "headers": {
+        "cache-control": "no-store, no-cache, must-revalidate"
+      },
+      "dest": "/js/components/$1"
     }
   ]
 }

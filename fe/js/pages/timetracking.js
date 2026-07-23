@@ -11,18 +11,24 @@
     _state: 'idle', // 'idle' | 'running' | 'paused'
     _chart: null,
     _period: 'week',
+    _page: 1,
+    PAGE_SIZE: 6,
     _logsData: [],
     _tasksList: [],
     _editingLogId: null, // null when creating, id when editing
 
     async init() {
-      await this._loadLogs();
-      await this._loadTasks();
+      // 1. Instant 0ms SWR render with local seed data (NO SPINNER!)
+      this._logsData = FS.db.get('time_logs') || [];
+      this._tasksList = FS.db.get('tasks') || [];
       this._populateTaskSelect();
       this._renderLogs();
       this._renderChart();
       this._renderControls();
       this._bindEvents();
+
+      // 2. Fetch live data from backend API in background & sync seamlessly
+      await Promise.all([this._loadLogs(), this._loadTasks()]);
     },
 
     _getAuthHeaders() {
@@ -58,28 +64,38 @@
           type: 'GET'
         });
 
-        if (response && response.success && Array.isArray(response.data)) {
-          this._logsData = response.data.map(l => ({
+        if (response && response.success && Array.isArray(response.data) && response.data.length > 0) {
+          const apiLogs = response.data.map(l => ({
             id: l.id,
             taskId: l.taskId,
+            taskCode: l.taskCode || '',
             taskTitle: l.taskTitle || '',
             userId: l.userId,
             userName: l.userName || '',
-            hours: l.hours || 0,
-            note: l.description || '',
-            date: l.loggedDate,
+            hours: l.hours,
+            note: l.note || '',
+            date: l.date,
             createdAt: l.createdAt
           }));
+
+          const mergedMap = new Map();
+          const seedData = FS.db.get('time_logs') || [];
+          for (const s of seedData) mergedMap.set(s.id, s);
+          for (const a of apiLogs) mergedMap.set(a.id, a);
+
+          this._logsData = Array.from(mergedMap.values());
           $('#timetracking-offline-banner').remove();
-        } else {
-          this._logsData = [];
+        } else if (!this._logsData.length) {
+          this._logsData = FS.db.get('time_logs') || [];
         }
       } catch (err) {
-        console.warn('Time logs API request failed:', err);
-        this._logsData = [];
-        if (!$('#timetracking-offline-banner').length) {
-          $('#page-content').prepend('<div id="timetracking-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu nhật ký tạm thời ngoại tuyến.</span></div>');
+        console.warn('TimeTracking API request failed:', err);
+        if (!this._logsData.length) {
+          this._logsData = FS.db.get('time_logs') || [];
         }
+      } finally {
+        this._renderLogs();
+        this._renderChart();
       }
     },
 
@@ -343,40 +359,90 @@
 
     _renderLogs() {
       const logs = this._getFilteredLogs();
-      const total = logs.reduce((s, l) => s + (l.hours || 0), 0);
+      const totalHours = logs.reduce((s, l) => s + (l.hours || 0), 0);
 
       const $badge = document.getElementById('tt-total-badge');
-      if ($badge) $badge.textContent = `${Math.round(total * 10) / 10}h tổng`;
+      if ($badge) $badge.textContent = `${Math.round(totalHours * 10) / 10}h tổng`;
+
+      const totalItems = logs.length;
+      const totalPages = Math.ceil(totalItems / this.PAGE_SIZE) || 1;
+      if (this._page > totalPages) this._page = totalPages;
+      if (this._page < 1) this._page = 1;
+
+      const start = (this._page - 1) * this.PAGE_SIZE;
+      const pagedLogs = logs.slice(start, start + this.PAGE_SIZE);
 
       const $body = document.getElementById('tt-log-body');
-      if (!$body) return;
+      if ($body) {
+        if (!logs.length) {
+          $body.innerHTML = '<tr><td colspan="6"><div class="fs-empty"><i class="bi bi-clock"></i><p>Chưa có log giờ nào</p></div></td></tr>';
+        } else {
+          $body.innerHTML = pagedLogs.map(l => {
+            const taskTitle = l.taskTitle || '—';
+            const projName = l.projectName || '—';
+            const canEdit = this._canEditLog(l);
+            const editBtn = canEdit ? `<button class="btn btn-ghost btn-icon btn-sm tt-edit-log" data-log-id="${l.id}" title="Sửa">
+              <i class="bi bi-pencil" style="font-size:12px;color:var(--fs-primary)"></i>
+            </button>` : '';
+            const deleteBtn = canEdit ? `<button class="btn btn-ghost btn-icon btn-sm tt-delete-log" data-log-id="${l.id}" title="Xoá">
+              <i class="bi bi-trash3" style="font-size:12px;color:var(--fs-danger)"></i>
+            </button>` : '';
+            return `
+              <tr>
+                <td style="font-size:13px">${FS.str.escape(taskTitle)}</td>
+                <td style="font-size:12px;color:var(--fs-text-secondary)">${FS.str.escape(projName)}</td>
+                <td style="font-size:12px;color:var(--fs-text-muted)">${FS.date.format(l.date)}</td>
+                <td><span class="fs-badge badge-accent">${l.hours}h</span></td>
+                <td style="font-size:12px;color:var(--fs-text-secondary)">${FS.str.escape(l.note || '—')}</td>
+                <td style="text-align:center">${editBtn}${deleteBtn}</td>
+              </tr>`;
+          }).join('');
+        }
+      }
 
-      if (!logs.length) {
-        $body.innerHTML = '<tr><td colspan="6"><div class="fs-empty"><i class="bi bi-clock"></i><p>Chưa có log giờ nào</p></div></td></tr>';
+      this._renderPagination(totalItems, totalPages);
+    },
+
+    _renderPagination(total, totalPages) {
+      const $ul = $('#tt-pagination-ul');
+      const $info = $('#tt-pagination-info');
+
+      if (total === 0) {
+        $info.text('Hiển thị 0 trong 0 nhật ký giờ làm');
+        $ul.html('');
         return;
       }
 
-      $body.innerHTML = logs.slice(0, 30).map(l => {
-        const task = FS.db.find('tasks', l.taskId);
-        const taskTitle = l.taskTitle || (task ? task.title : '—');
-        const proj = task ? FS.db.find('projects', task.projectId) : null;
-        const canEdit = this._canEditLog(l);
-        const editBtn = canEdit ? `<button class="btn btn-ghost btn-icon btn-sm tt-edit-log" data-log-id="${l.id}" title="Sửa">
-          <i class="bi bi-pencil" style="font-size:12px;color:var(--fs-primary)"></i>
-        </button>` : '';
-        const deleteBtn = canEdit ? `<button class="btn btn-ghost btn-icon btn-sm tt-delete-log" data-log-id="${l.id}" title="Xoá">
-          <i class="bi bi-trash3" style="font-size:12px;color:var(--fs-danger)"></i>
-        </button>` : '';
-        return `
-          <tr>
-            <td style="font-size:13px">${FS.str.escape(taskTitle)}</td>
-            <td style="font-size:12px;color:var(--fs-text-secondary)">${proj ? FS.str.escape(proj.name) : '—'}</td>
-            <td style="font-size:12px;color:var(--fs-text-muted)">${FS.date.format(l.date)}</td>
-            <td><span class="fs-badge badge-accent">${l.hours}h</span></td>
-            <td style="font-size:12px;color:var(--fs-text-secondary)">${FS.str.escape(l.note || '—')}</td>
-            <td>${editBtn}${deleteBtn}</td>
-          </tr>`;
-      }).join('');
+      const start = (this._page - 1) * this.PAGE_SIZE + 1;
+      const end = Math.min(this._page * this.PAGE_SIZE, total);
+      $info.text(`Hiển thị ${start}-${end} trong ${total} nhật ký giờ làm`);
+
+      let html = '';
+
+      // Nút quay lại bị vô hiệu hóa khi ở trang 1
+      if (this._page === 1) {
+        html += `<li class="page-item disabled" aria-disabled="true"><span class="page-link">&laquo; Trước</span></li>`;
+      } else {
+        html += `<li class="page-item"><a class="page-link tt-page-link" data-page="${this._page - 1}" href="#">&laquo; Trước</a></li>`;
+      }
+
+      // Danh sách trang
+      for (let p = 1; p <= totalPages; p++) {
+        if (p === this._page) {
+          html += `<li class="page-item active" aria-current="page"><span class="page-link">${p}</span></li>`;
+        } else {
+          html += `<li class="page-item"><a class="page-link tt-page-link" data-page="${p}" href="#">${p}</a></li>`;
+        }
+      }
+
+      // Nút trang tiếp theo
+      if (this._page === totalPages) {
+        html += `<li class="page-item disabled" aria-disabled="true"><span class="page-link">Sau &raquo;</span></li>`;
+      } else {
+        html += `<li class="page-item"><a class="page-link tt-page-link" data-page="${this._page + 1}" href="#">Sau &raquo;</a></li>`;
+      }
+
+      $ul.html(html);
     },
 
     _renderChart() {
@@ -389,9 +455,7 @@
       const colors = ['#6366f1','#8b5cf6','#ec4899','#f59e0b','#10b981','#3b82f6'];
 
       logs.forEach(l => {
-        const task = FS.db.find('tasks', l.taskId);
-        const p = task ? FS.db.find('projects', task.projectId) : null;
-        const name = p ? p.name : 'Dự án chung';
+        const name = l.projectName || 'Dự án chung';
         data[name] = (data[name] || 0) + (l.hours || 0);
       });
 
@@ -410,6 +474,7 @@
           }]
         },
         options: {
+          indexAxis: 'y',
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
@@ -417,8 +482,21 @@
             tooltip: { callbacks: { label: ctx => ctx.raw + 'h' } }
           },
           scales: {
-            x: { grid: { display: false }, border: { display: false } },
-            y: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { callback: v => v + 'h' } }
+            x: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { callback: v => v + 'h' } },
+            y: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: {
+                font: { size: window.innerWidth < 768 ? 10 : 12 },
+                callback: function (val) {
+                  const label = this.getLabelForValue(val);
+                  if (window.innerWidth < 768 && label.length > 14) {
+                    return label.substring(0, 12) + '...';
+                  }
+                  return label;
+                }
+              }
+            }
           }
         }
       });
@@ -426,6 +504,16 @@
 
     _bindEvents() {
       const self = this;
+
+      // Pagination links
+      $(document).off('click.tt-page').on('click.tt-page', '.tt-page-link', function (e) {
+        e.preventDefault();
+        const p = parseInt($(this).data('page'), 10);
+        if (p && p !== self._page) {
+          self._page = p;
+          self._renderLogs();
+        }
+      });
 
       const $wrap = document.getElementById('tt-controls-wrap');
       if ($wrap) {
@@ -482,7 +570,7 @@
       });
 
       // Manual log modal (Add / Edit)
-      document.getElementById('tt-add-manual-btn')?.addEventListener('click', function () {
+      const openManualModal = function () {
         self._editingLogId = null;
         const $title = document.getElementById('tt-modal-title');
         if ($title) $title.textContent = 'Thêm bản ghi giờ';
@@ -493,7 +581,10 @@
         if ($d) $d.value = today;
         const $ov = document.getElementById('tt-modal-overlay');
         if ($ov) $ov.style.display = 'flex';
-      });
+      };
+
+      document.getElementById('tt-add-manual-btn')?.addEventListener('click', openManualModal);
+      document.getElementById('tt-manual-log-btn')?.addEventListener('click', openManualModal);
       document.getElementById('tt-modal-close')?.addEventListener('click', () => {
         const $ov = document.getElementById('tt-modal-overlay');
         if ($ov) $ov.style.display = 'none';

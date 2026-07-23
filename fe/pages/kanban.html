@@ -26,7 +26,7 @@
   </div>
 
   <!-- Kanban Board -->
-  <div id="kanban-board" style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;align-items:flex-start;min-height:calc(100vh - 200px)">
+  <div id="kanban-board" style="display:flex;gap:16px;overflow-x:auto;padding-bottom:16px;align-items:flex-start;min-height:calc(100vh - 200px);scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch">
     <!-- Columns rendered by JS -->
   </div>
 
@@ -35,12 +35,19 @@
 <style>
 /* Kanban specific styles */
 .kanban-col {
-  min-width: 280px;
-  width: 280px;
+  min-width: 290px;
+  width: 290px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 200px);
+  scroll-snap-align: start;
+}
+@media (max-width: 767.98px) {
+  .kanban-col {
+    min-width: 82vw;
+    width: 82vw;
+  }
 }
 .kanban-col-header {
   display: flex;
@@ -66,7 +73,7 @@
   border: 1.5px solid var(--fs-border);
   border-radius: var(--fs-radius);
   padding: 12px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   cursor: grab;
   transition: var(--fs-transition);
   user-select: none;

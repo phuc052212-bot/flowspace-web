@@ -88,6 +88,13 @@ namespace FlowSpace.Api.Controllers
                 return FailResponse<UserDto>("Email này đã được sử dụng bởi một tài khoản khác.");
             }
 
+            var departmentId = string.IsNullOrWhiteSpace(request.Department)
+                ? null
+                : await _context.Departments
+                    .Where(department => department.Name == request.Department && !department.IsDeleted)
+                    .Select(department => (Guid?)department.Id)
+                    .FirstOrDefaultAsync();
+
             var user = new User
             {
                 Id = Guid.NewGuid(),
@@ -97,7 +104,7 @@ namespace FlowSpace.Api.Controllers
                 Role = "employee",
                 Avatar = request.Avatar,
                 Color = request.Color,
-                Department = request.Department,
+                DepartmentId = departmentId,
                 Position = request.Position,
                 Phone = request.Phone,
                 Active = true,

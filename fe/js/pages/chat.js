@@ -125,7 +125,7 @@
       document.getElementById('chat-dm-list').innerHTML = dms.map(c => {
         const session = FS.auth.getSession();
         const partnerId = c.partnerId || c.members.find(m => m !== session?.userId);
-        const partner   = FS.db.find('users', partnerId);
+        const partner   = FS.user.get(partnerId);
         return `
           <div class="chat-channel-item${this._currentChannel === c.id ? ' active' : ''}" data-channel-id="${c.id}">
             <div class="fs-avatar fs-avatar-sm ${partner?.color || 'av-indigo'}" style="width:18px;height:18px;font-size:9px">${partner?.avatar || '?'}</div>
@@ -139,6 +139,8 @@
       this._currentChannel = channelId;
       const channel = FS.db.get('channels').find(c => c.id === channelId);
       if (!channel) return;
+
+      $('#chat-page').addClass('chat-active');
 
       // Update header
       document.getElementById('chat-channel-name').textContent =
@@ -195,21 +197,18 @@
       let lastUserId = null;
 
       msgs.forEach(msg => {
-        const user = FS.db.find('users', msg.userId);
-        const showHeader = msg.userId !== lastUserId || !!msg.replyTo;
-        lastUserId = msg.userId;
-        const isMe = msg.userId === FS.auth.getSession()?.userId;
+        const user = FS.user.get(msg.userId);
+        const session = FS.auth.getSession();
+        const isMe = msg.userId === session?.userId || msg.userId === session?.id;
 
-        let displayText = msg.recalled ? '<em style="color:var(--fs-text-muted)">Tin nhắn đã được thu hồi</em>' : FS.str.escape(msg.text);
+        let displayText = msg.recalled ? '<em style="opacity:0.75">Tin nhắn đã được thu hồi</em>' : FS.str.escape(msg.text);
         
         if (!msg.recalled) {
-          // Highlight mention
-          const mentionRegex = /@([a-zA-ZÀ-ỹ\\s_]+)/g;
+          const mentionRegex = /@([a-zA-ZÀ-ỹ\s_]+)/g;
           displayText = displayText.replace(mentionRegex, (match) => {
              return `<span class="chat-mention-highlight">${match}</span>`;
           });
           
-          // Highlight search term
           if (this._searchQuery) {
             const q = this._searchQuery;
             const searchRegex = new RegExp(`(${FS.str.escape(q).replace(/[.*+?^$\\{\\}()|[\\]\\\\]/g, '\\$&')})`, 'gi');
@@ -222,10 +221,10 @@
         if (msg.replyTo) {
            const origMsg = (messagesMap[channelId] || []).find(m => m.id === msg.replyTo);
            if (origMsg) {
-             const origUser = FS.db.find('users', origMsg.userId);
+             const origUser = FS.user.get(origMsg.userId);
              let origText = origMsg.recalled ? 'Tin nhắn đã được thu hồi' : origMsg.text;
              quoteHtml = `<div class="chat-quoted-msg">
-                <strong>${FS.str.escape(origUser?.name || 'Unknown')}</strong>: ${FS.str.escape(origText)}
+                <strong>${FS.str.escape(origUser?.name || 'Thành viên')}</strong>: ${FS.str.escape(origText)}
              </div>`;
            }
         }
@@ -240,22 +239,23 @@
             </div>`;
         }
 
-        html += `<div class="chat-msg" data-msg-id="${msg.id}" style="position:relative">
+        const avatarHtml = isMe ? '' : `<div class="fs-avatar fs-avatar-sm ${user?.color || 'av-indigo'}" style="flex-shrink:0">${user?.avatar || '?'}</div>`;
+        const nameHtml = (!isMe) ? `<div class="chat-sender-name">${FS.str.escape(user?.name || 'Thành viên')}</div>` : '';
+
+        html += `<div class="chat-msg-row ${isMe ? 'is-me' : 'is-other'}" data-msg-id="${msg.id}">
           ${actionsHtml}
-          <div style="width:32px;flex-shrink:0;padding-top:4px">
-            ${showHeader ? `<div class="fs-avatar fs-avatar-sm ${user?.color || 'av-indigo'}">${user?.avatar || '?'}</div>` : ''}
-          </div>
-          <div class="chat-msg-body">
-            ${showHeader ? `<div class="chat-msg-header">
-              <span class="chat-msg-name">${FS.str.escape(user?.name || 'Unknown')}</span>
-              <span class="chat-msg-time">${FS.date.chatTime(msg.createdAt)}</span>
-            </div>` : ''}
-            ${quoteHtml}
-            <div class="chat-msg-text">${displayText}</div>
+          ${avatarHtml}
+          <div style="display:flex;flex-direction:column;min-width:0;align-items:${isMe ? 'flex-end' : 'flex-start'}">
+            ${nameHtml}
+            <div class="chat-bubble">
+              ${quoteHtml}
+              <div>${displayText}</div>
+              <div class="chat-bubble-time">${FS.date.chatTime(msg.createdAt)}</div>
+            </div>
             ${msg.reactions && Object.keys(msg.reactions).length ? `
               <div class="d-flex gap-1 mt-1">
                 ${Object.entries(msg.reactions).map(([emoji, count]) =>
-                  `<span class="fs-badge badge-neutral" style="cursor:default;font-size:12px">${emoji === 'heart'?'❤️':emoji==='clap'?'👏':emoji==='like'?'👍':emoji==='party'?'🎉':'⭐'} ${count}</span>`
+                  `<span class="fs-badge badge-neutral" style="cursor:default;font-size:11px;padding:1px 5px">${emoji === 'heart'?'❤️':emoji==='clap'?'👏':emoji==='like'?'👍':emoji==='party'?'🎉':'⭐'} ${count}</span>`
                 ).join('')}
               </div>` : ''}
           </div>
@@ -263,10 +263,12 @@
       });
 
       $container.innerHTML = html;
-      
+
       // Scroll to bottom only if not searching (otherwise keeps jumping)
       if(!this._searchQuery) {
-        $container.scrollTop = $container.scrollHeight;
+        setTimeout(() => {
+          $container.scrollTop = $container.scrollHeight;
+        }, 50);
       }
     },
 
@@ -384,6 +386,11 @@
 
     _bindEvents() {
       const self = this;
+
+      // Mobile back button
+      document.getElementById('chat-mobile-back')?.addEventListener('click', function () {
+        $('#chat-page').removeClass('chat-active');
+      });
 
       // Channel click
       $(document).off('click.channelItem').on('click.channelItem', '.chat-channel-item', function () {

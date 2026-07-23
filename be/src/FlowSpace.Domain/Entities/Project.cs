@@ -42,6 +42,9 @@ namespace FlowSpace.Domain.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public string? Client { get; set; }
+        public decimal? Budget { get; set; }
+
         public ICollection<User> Members { get; set; } = new List<User>();
         public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
     }

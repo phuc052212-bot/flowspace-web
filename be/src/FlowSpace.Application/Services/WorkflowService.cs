@@ -192,6 +192,10 @@ namespace FlowSpace.Application.Services
             {
                 request.Status = RequestStatus.Rejected;
             }
+            else if (parsedStatus == ApprovalStatus.Returned)
+            {
+                request.Status = RequestStatus.Returned;
+            }
             else if (request.Approvals.All(a => a.Status == ApprovalStatus.Approved))
             {
                 request.Status = RequestStatus.Approved;

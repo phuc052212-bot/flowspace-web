@@ -15,7 +15,9 @@ namespace FlowSpace.Application.Common.Mappings
             CreateMap<Project, ProjectResponse>()
                 .ForMember(dest => dest.OwnerName, opt => opt.MapFrom(src => src.Owner != null ? src.Owner.Name : string.Empty))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToString()));
+                .ForMember(dest => dest.Priority, opt => opt.MapFrom(src => src.Priority.ToString()))
+                .ForMember(dest => dest.TaskCount, opt => opt.MapFrom(src => src.Tasks != null ? src.Tasks.Count : 0))
+                .ForMember(dest => dest.CompletedTaskCount, opt => opt.MapFrom(src => src.Tasks != null ? src.Tasks.Count(t => t.Status == FlowSpace.Domain.Enums.TaskStatus.Done) : 0));
 
             CreateMap<CreateProjectRequest, Project>();
 
@@ -50,7 +52,10 @@ namespace FlowSpace.Application.Common.Mappings
             // TimeLog mapping
             CreateMap<TimeLog, TimeLogDto>()
                 .ForMember(dest => dest.TaskTitle, opt => opt.MapFrom(src => src.Task != null ? src.Task.Title : string.Empty))
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty))
+                .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project != null ? src.Project.Name : string.Empty))
+                .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.ProjectId))
+                .ForMember(dest => dest.LoggedDate, opt => opt.MapFrom(src => src.Date));
         }
     }
 }

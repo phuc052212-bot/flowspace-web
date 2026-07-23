@@ -10,9 +10,13 @@
     </button>
   </div>
 
-  <div class="fs-filters">
-    <input type="text" class="fs-search-input" id="logs-search" placeholder="Tìm trong nhật ký...">
-    <select class="fs-filter-select" id="logs-filter-action">
+  <!-- Filters Bar -->
+  <div class="fs-filters d-flex align-items-center flex-wrap gap-2 mb-3" style="padding:12px;background:var(--fs-card-bg);border:1px solid var(--fs-border);border-radius:var(--fs-radius-md)">
+    <div class="position-relative" style="min-width:200px">
+      <input type="text" class="fs-search-input" id="logs-search" placeholder="Tìm trong nhật ký..." style="height:34px;font-size:13px;padding-left:30px">
+      <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left:10px;font-size:12px"></i>
+    </div>
+    <select class="fs-filter-select" id="logs-filter-action" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả hành động</option>
       <option value="LOGIN">Đăng nhập</option>
       <option value="LOGOUT">Đăng xuất</option>
@@ -21,27 +25,29 @@
       <option value="ASSIGN">Phân công</option>
       <option value="APPROVE">Phê duyệt</option>
     </select>
-    <select class="fs-filter-select" id="logs-filter-user">
+    <select class="fs-filter-select" id="logs-filter-user" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả người dùng</option>
     </select>
   </div>
 
   <div class="fs-card" style="padding:0;overflow:hidden">
-    <table class="fs-table">
-      <thead>
-        <tr>
-          <th style="width:140px">Thời gian</th>
-          <th>Người dùng</th>
-          <th>Hành động</th>
-          <th>Module</th>
-          <th>Chi tiết</th>
-          <th>IP</th>
-        </tr>
-      </thead>
-      <tbody id="logs-table-body">
-        <tr><td colspan="6"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
-      </tbody>
-    </table>
+    <div class="table-responsive" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <table class="fs-table" style="min-width:720px">
+        <thead>
+          <tr>
+            <th style="min-width:140px">Thời gian</th>
+            <th style="min-width:150px">Người dùng</th>
+            <th style="min-width:120px">Hành động</th>
+            <th style="min-width:110px">Module</th>
+            <th style="min-width:200px">Chi tiết</th>
+            <th style="min-width:110px">IP</th>
+          </tr>
+        </thead>
+        <tbody id="logs-table-body">
+          <tr><td colspan="6"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="d-flex align-items-center justify-content-between mt-3">
     <span class="fs-small" id="logs-info"></span>

@@ -12,9 +12,9 @@
       <select class="fs-filter-select" id="gantt-filter-project">
         <option value="">Tất cả dự án</option>
       </select>
-      <div class="d-flex" style="border:1.5px solid var(--fs-border);border-radius:var(--fs-radius);overflow:hidden">
-        <button class="btn btn-ghost btn-sm gantt-zoom active" data-zoom="week" style="border-radius:0;font-size:12px">Tuần</button>
-        <button class="btn btn-ghost btn-sm gantt-zoom" data-zoom="month" style="border-radius:0;border-left:1px solid var(--fs-border);font-size:12px">Tháng</button>
+      <div class="fs-view-toggle-group">
+        <button class="view-toggle gantt-zoom active" data-zoom="week" title="Xem theo Tuần">Tuần</button>
+        <button class="view-toggle gantt-zoom" data-zoom="month" title="Xem theo Tháng">Tháng</button>
       </div>
     </div>
   </div>
@@ -30,9 +30,28 @@
 </div>
 
 <style>
-.gantt-table { min-width: 100%; border-collapse: collapse; }
-.gantt-task-col { width: 260px; min-width: 260px; }
-.gantt-header-row { background: var(--fs-bg-secondary); position: sticky; top: 0; z-index: 5; }
+.gantt-table { min-width: 100%; border-collapse: separate; border-spacing: 0; }
+.gantt-task-col { width: 300px; min-width: 300px; }
+@media (max-width: 767.98px) {
+  .gantt-task-col,
+  .gantt-task-header,
+  .gantt-task-cell {
+    width: 135px !important;
+    min-width: 135px !important;
+    padding: 6px 8px !important;
+  }
+  .gantt-task-name {
+    font-size: 11px !important;
+    max-width: 105px !important;
+  }
+  .gantt-task-meta {
+    display: none !important;
+  }
+  .gantt-day-cell {
+    min-width: 28px !important;
+  }
+}
+.gantt-header-row { position: sticky; top: 0; z-index: 20; background: var(--fs-bg-secondary); }
 .gantt-header-cell {
   padding: 10px 8px;
   font-size: 11px;
@@ -41,10 +60,16 @@
   letter-spacing: 0.4px;
   color: var(--fs-text-muted);
   border-bottom: 1.5px solid var(--fs-border);
+  border-right: 1px solid var(--fs-border);
   white-space: nowrap;
   text-align: center;
+  background: var(--fs-bg-secondary);
 }
 .gantt-task-header {
+  position: sticky;
+  left: 0;
+  top: 0;
+  z-index: 30;
   padding: 10px 14px;
   font-size: 11px;
   font-weight: 600;
@@ -52,28 +77,39 @@
   letter-spacing: 0.4px;
   color: var(--fs-text-muted);
   border-bottom: 1.5px solid var(--fs-border);
-  border-right: 1.5px solid var(--fs-border);
+  border-right: 2px solid var(--fs-border);
   background: var(--fs-bg-secondary);
+  width: 300px;
+  min-width: 300px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.06);
 }
 .gantt-row { border-bottom: 1px solid var(--fs-border); transition: var(--fs-transition); }
 .gantt-row:hover { background: var(--fs-bg-hover); }
+.gantt-row:hover .gantt-task-cell { background: var(--fs-bg-hover) !important; }
 .gantt-task-cell {
+  position: sticky;
+  left: 0;
+  z-index: 15;
   padding: 10px 14px;
-  border-right: 1.5px solid var(--fs-border);
+  border-right: 2px solid var(--fs-border);
+  border-bottom: 1px solid var(--fs-border);
   vertical-align: middle;
+  width: 300px;
+  min-width: 300px;
+  background: var(--fs-bg);
+  box-shadow: 2px 0 8px rgba(0,0,0,0.06);
 }
-.gantt-task-name { font-size: 12px; font-weight: 500; color: var(--fs-text); }
+.gantt-task-name { font-size: 13px; font-weight: 600; color: var(--fs-text); }
 .gantt-task-meta { font-size: 11px; color: var(--fs-text-muted); margin-top: 2px; }
-.gantt-day-cell { position: relative; height: 42px; border-right: 1px solid var(--fs-border); min-width: 32px; }
-.gantt-day-cell.today { background: #eef2ff; }
-.gantt-bar-wrapper { position: absolute; top: 50%; transform: translateY(-50%); height: 18px; }
+.gantt-day-cell { position: relative; height: 44px; border-right: 1px solid var(--fs-border); border-bottom: 1px solid var(--fs-border); min-width: 32px; }
+.gantt-day-cell.today { background: rgba(99, 102, 241, 0.06); }
+.gantt-bar-wrapper { position: absolute; top: 50%; transform: translateY(-50%); height: 22px; }
 .gantt-bar {
   height: 100%;
-  border-radius: 4px;
-  opacity: 0.9;
-  cursor: ew-resize;
+  opacity: 0.92;
+  cursor: pointer;
   user-select: none;
-  transition: opacity 0.15s, border 0.15s;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   padding: 0 6px;
@@ -84,13 +120,13 @@
   overflow: hidden;
   box-sizing: border-box;
 }
-.gantt-bar:hover { opacity: 1; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.gantt-bar:hover { opacity: 1; filter: brightness(1.08); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 .gantt-bar.critical {
-  border: 2px solid #ef4444;
-  box-shadow: 0 0 8px rgba(239,68,68,0.5);
+  box-shadow: 0 0 8px rgba(239,68,68,0.4);
   opacity: 1;
 }
-.gantt-project-row { background: var(--fs-bg-tertiary); }
+.gantt-project-row { background: var(--fs-bg-secondary); }
+.gantt-project-row .gantt-task-cell { background: var(--fs-bg-secondary) !important; }
 .gantt-project-row .gantt-task-name { font-weight: 700; color: var(--fs-accent); font-size: 13px; }
 .gantt-today-line {
   position: absolute;
@@ -98,8 +134,7 @@
   bottom: 0;
   width: 2px;
   background: var(--fs-danger);
-  opacity: 0.6;
+  opacity: 0.7;
   z-index: 3;
   pointer-events: none;
 }
-</style>

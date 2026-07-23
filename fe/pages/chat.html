@@ -1,15 +1,15 @@
 <!-- FlowSpace — Chat Page -->
-<div class="page-enter" id="chat-page" style="height:calc(100vh - var(--fs-topbar-height) - 56px);display:flex;gap:16px;padding:0;margin:-28px -32px;overflow:hidden">
+<div class="page-enter" id="chat-page" style="height:calc(100vh - var(--fs-topbar-height) - 56px);display:flex;gap:0;padding:0;margin:-28px -32px;overflow:hidden">
 
   <!-- Channels sidebar -->
-  <div id="chat-sidebar" style="width:260px;flex-shrink:0;background:var(--fs-bg);border-right:1.5px solid var(--fs-border);display:flex;flex-direction:column;overflow:hidden">
+  <div id="chat-sidebar" style="width:280px;flex-shrink:0;background:var(--fs-bg);border-right:1.5px solid var(--fs-border);display:flex;flex-direction:column;overflow:hidden">
     <div style="padding:16px 14px;border-bottom:1px solid var(--fs-border)">
       <div class="d-flex align-items-center justify-content-between mb-2">
-        <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--fs-text-muted)">Kênh</span>
+        <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--fs-text-muted)">Kênh trò chuyện</span>
       </div>
       <div id="chat-channels-list"></div>
     </div>
-    <div style="padding:12px 14px 6px">
+    <div style="padding:12px 14px 6px;flex:1;overflow-y:auto">
       <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--fs-text-muted);margin-bottom:8px">Tin nhắn trực tiếp</div>
       <div id="chat-dm-list"></div>
     </div>
@@ -19,16 +19,19 @@
   <div id="chat-main" style="flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--fs-bg)">
 
     <!-- Header -->
-    <div id="chat-header" style="padding:14px 20px;border-bottom:1.5px solid var(--fs-border);display:flex;align-items:center;gap:10px;flex-shrink:0">
-      <div style="width:8px;height:8px;border-radius:50%;background:var(--fs-success)"></div>
-      <div style="flex:1">
-        <div id="chat-channel-name" style="font-weight:600;font-size:14px">Chọn kênh để bắt đầu</div>
-        <div id="chat-channel-desc" class="fs-small"></div>
+    <div id="chat-header" style="padding:12px 20px;border-bottom:1.5px solid var(--fs-border);display:flex;align-items:center;gap:12px;flex-shrink:0">
+      <button class="btn btn-ghost btn-icon btn-sm d-md-none" id="chat-mobile-back" title="Quay lại danh sách">
+        <i class="bi bi-chevron-left" style="font-size:18px"></i>
+      </button>
+      <div style="width:10px;height:10px;border-radius:50%;background:var(--fs-success);flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div id="chat-channel-name" style="font-weight:700;font-size:15px" class="truncate">Chọn kênh để bắt đầu</div>
+        <div id="chat-channel-desc" class="fs-small text-muted truncate"></div>
       </div>
       <!-- Search Box -->
-      <div style="position:relative;width:240px">
+      <div style="position:relative;width:200px" class="d-none d-sm-block">
         <i class="bi bi-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--fs-text-muted);font-size:12px"></i>
-        <input type="text" id="chat-search-input" class="fs-input" style="padding-left:32px;height:32px;font-size:13px;width:100%" placeholder="Tìm kiếm tin nhắn...">
+        <input type="text" id="chat-search-input" class="fs-input" style="padding-left:32px;height:32px;font-size:13px;width:100%" placeholder="Tìm tin nhắn...">
       </div>
     </div>
 
@@ -41,7 +44,7 @@
     </div>
 
     <!-- Messages -->
-    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:2px">
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:10px">
       <div class="fs-empty"><i class="bi bi-chat-dots"></i><p>Chọn kênh để xem tin nhắn</p></div>
     </div>
 
@@ -62,13 +65,15 @@
         <button class="btn btn-icon btn-sm" id="chat-reply-cancel" style="color:var(--fs-text-muted)"><i class="bi bi-x"></i></button>
       </div>
 
-      <div style="display:flex;gap:10px;align-items:flex-end;background:var(--fs-bg-secondary);border:1.5px solid var(--fs-border);border-radius:var(--fs-radius-md);padding:10px 14px;transition:var(--fs-transition)" id="chat-input-wrap">
-        <textarea id="chat-input" rows="1" placeholder="Nhắn tin..." style="flex:1;border:none;background:transparent;outline:none;font-family:var(--fs-font);font-size:13px;resize:none;max-height:120px;line-height:1.5;color:var(--fs-text)"></textarea>
-        <button id="chat-send-btn" class="btn btn-primary btn-icon btn-sm" style="flex-shrink:0;align-self:flex-end">
-          <i class="bi bi-send-fill"></i>
+      <div style="display:flex;gap:8px;align-items:center;background:var(--fs-bg-secondary);border:1.5px solid var(--fs-border);border-radius:24px;padding:6px 14px;transition:var(--fs-transition)" id="chat-input-wrap">
+        <button class="btn btn-ghost btn-icon btn-sm text-muted" title="Gửi tệp"><i class="bi bi-paperclip" style="font-size:16px"></i></button>
+        <button class="btn btn-ghost btn-icon btn-sm text-muted" title="Gửi ảnh"><i class="bi bi-image" style="font-size:16px"></i></button>
+        <textarea id="chat-input" rows="1" placeholder="Nhập tin nhắn..." style="flex:1;border:none;background:transparent;outline:none;font-family:var(--fs-font);font-size:13px;resize:none;max-height:100px;line-height:1.5;color:var(--fs-text);padding:4px 0"></textarea>
+        <button id="chat-send-btn" class="btn btn-primary btn-icon btn-sm" style="border-radius:50%;width:34px;height:34px;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="bi bi-send-fill" style="font-size:13px"></i>
         </button>
       </div>
-      <div class="fs-small mt-1" style="color:var(--fs-text-muted);padding:0 4px">Nhấn Enter để gửi · Shift+Enter để xuống dòng · Gõ @ để nhắc tên</div>
+      <div class="fs-small mt-1" style="color:var(--fs-text-muted);padding:0 8px;font-size:11px">Nhấn Enter để gửi · Shift+Enter để xuống dòng · Gõ @ để nhắc tên</div>
     </div>
 
   </div>
@@ -76,63 +81,130 @@
 </div>
 
 <style>
+/* Zalo / Messenger Chat UI Styling */
 .chat-channel-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: var(--fs-radius);
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--fs-radius-md);
   cursor: pointer;
   transition: var(--fs-transition);
   font-size: 13px;
   color: var(--fs-text-secondary);
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 .chat-channel-item:hover { background: var(--fs-bg-secondary); color: var(--fs-text); }
-.chat-channel-item.active { background: var(--fs-accent-light); color: var(--fs-accent-dark); font-weight: 600; }
+.chat-channel-item.active { background: var(--fs-accent-light); color: var(--fs-accent); font-weight: 600; }
 .chat-channel-item .ch-hash { font-size: 14px; width: 16px; text-align: center; flex-shrink: 0; }
-.chat-msg {
+
+/* Speech Bubble Alignment */
+.chat-msg-row {
   display: flex;
-  gap: 10px;
-  padding: 4px 0;
-  group: 1;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 80%;
+  position: relative;
+  margin-bottom: 4px;
 }
-.chat-msg:hover .chat-msg-time { opacity: 1; }
-.chat-msg-body { flex: 1; min-width: 0; }
-.chat-msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
-.chat-msg-name { font-size: 13px; font-weight: 600; color: var(--fs-text); }
-.chat-msg-time { font-size: 11px; color: var(--fs-text-muted); opacity: 0; transition: opacity 0.15s; }
-.chat-msg-text { font-size: 13px; color: var(--fs-text-secondary); line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
-.chat-msg-divider { text-align: center; font-size: 11px; color: var(--fs-text-muted); margin: 12px 0; position: relative; }
+.chat-msg-row.is-me {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+.chat-msg-row.is-other {
+  align-self: flex-start;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  word-break: break-word;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.chat-msg-row.is-me .chat-bubble {
+  background: var(--fs-accent);
+  color: #ffffff;
+  border-radius: 18px 18px 4px 18px;
+}
+.chat-msg-row.is-other .chat-bubble {
+  background: var(--fs-bg-secondary);
+  color: var(--fs-text);
+  border: 1px solid var(--fs-border);
+  border-radius: 18px 18px 18px 4px;
+}
+
+.chat-bubble-time {
+  font-size: 10px;
+  margin-top: 3px;
+  line-height: 1;
+}
+.chat-msg-row.is-me .chat-bubble-time {
+  color: rgba(255,255,255,0.8);
+  text-align: right;
+}
+.chat-msg-row.is-other .chat-bubble-time {
+  color: var(--fs-text-muted);
+}
+.chat-sender-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fs-accent);
+  margin-left: 4px;
+  margin-bottom: 2px;
+}
+
+.chat-msg-divider { text-align: center; font-size: 11px; color: var(--fs-text-muted); margin: 16px 0; position: relative; }
 .chat-msg-divider::before, .chat-msg-divider::after { content:''; position:absolute; top:50%; width:calc(50% - 60px); height:1px; background:var(--fs-border); }
 .chat-msg-divider::before { left:0; }
 .chat-msg-divider::after { right:0; }
 
 .chat-msg-actions {
-  display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; align-items: center; padding: 2px 8px;
-  background: var(--fs-bg); border: 1px solid var(--fs-border); border-radius: var(--fs-radius);
-  position: absolute; right: 20px; top: -12px; z-index: 10;
+  display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; align-items: center; padding: 2px 6px;
+  background: var(--fs-bg); border: 1px solid var(--fs-border); border-radius: 14px;
+  position: absolute; top: -14px; z-index: 10;
+  box-shadow: var(--fs-shadow-xs);
 }
-.chat-msg:hover .chat-msg-actions { opacity: 1; }
-.chat-msg-action-btn { background: none; border: none; cursor: pointer; color: var(--fs-text-muted); font-size: 13px; padding: 4px; transition: color 0.15s; }
+.chat-msg-row.is-me .chat-msg-actions { right: 10px; }
+.chat-msg-row.is-other .chat-msg-actions { left: 40px; }
+.chat-msg-row:hover .chat-msg-actions { opacity: 1; }
+.chat-msg-action-btn { background: none; border: none; cursor: pointer; color: var(--fs-text-muted); font-size: 13px; padding: 3px 5px; transition: color 0.15s; }
 .chat-msg-action-btn:hover { color: var(--fs-text); }
 
 .chat-quoted-msg {
-  border-left: 3px solid var(--fs-border); padding-left: 8px; margin-bottom: 4px;
-  font-size: 12px; color: var(--fs-text-secondary); cursor: pointer;
+  border-left: 3px solid var(--fs-accent); padding-left: 8px; margin-bottom: 6px;
+  font-size: 11px; opacity: 0.9; cursor: pointer;
 }
 .chat-mention-highlight {
-  background: var(--fs-accent-light); color: var(--fs-accent-dark); font-weight: 600; padding: 0 4px; border-radius: 4px;
+  background: rgba(255,255,255,0.25); color: #fff; font-weight: 600; padding: 0 4px; border-radius: 4px;
 }
-.chat-mention-item {
-  padding: 8px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px;
+.chat-msg-row.is-other .chat-mention-highlight {
+  background: var(--fs-accent-light); color: var(--fs-accent);
 }
-.chat-mention-item:hover, .chat-mention-item.active { background: var(--fs-bg-secondary); }
-
 .chat-search-highlight { background: #fef08a; color: #854d0e; padding: 0 2px; border-radius: 2px; }
 
-.chat-pinned-item {
-  background: var(--fs-bg); border: 1px solid var(--fs-border); border-radius: var(--fs-radius); padding: 6px 12px;
-  font-size: 12px; display: flex; gap: 10px; align-items: baseline;
+/* Mobile responsive Zalo app layout */
+@media (max-width: 767.98px) {
+  #chat-page {
+    margin: -12px !important;
+    height: calc(100vh - var(--fs-topbar-height) - 24px) !important;
+  }
+  #chat-sidebar {
+    width: 100% !important;
+  }
+  #chat-main {
+    display: none;
+  }
+  #chat-page.chat-active #chat-sidebar {
+    display: none !important;
+  }
+  #chat-page.chat-active #chat-main {
+    display: flex !important;
+    width: 100% !important;
+  }
+  .chat-msg-row {
+    max-width: 90% !important;
+  }
 }
 </style>

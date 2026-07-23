@@ -38,12 +38,22 @@
       </div>
     </div>
     <div class="col-12 col-lg-4">
-      <div class="fs-card">
-        <div class="fs-card-header">
-          <h6 class="fs-h6 m-0"><i class="bi bi-pie-chart me-2" style="color:var(--fs-accent)"></i>Phân bố task</h6>
+      <div class="fs-card h-100">
+        <div class="fs-card-header d-flex align-items-center justify-content-between">
+          <h6 class="fs-h6 m-0"><i class="bi bi-pie-chart-fill me-2" style="color:var(--fs-accent)"></i>Phân bố task</h6>
+          <span class="fs-badge badge-neutral" id="report-status-badge" style="font-size:11px">Tổng số</span>
         </div>
-        <div style="height:260px;display:flex;align-items:center;justify-content:center">
-          <canvas id="report-status-chart" style="max-width:200px;max-height:200px"></canvas>
+        <div class="dashboard-status-chart-container" style="height:220px">
+          <div class="dashboard-status-chart-wrap" style="position:relative">
+            <canvas id="report-status-chart" style="max-width:130px;max-height:130px"></canvas>
+            <div id="report-status-center-text" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none">
+              <div style="font-size:20px;font-weight:700;line-height:1;color:var(--fs-text)" id="report-status-total">0</div>
+              <div style="font-size:9px;color:var(--fs-text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Tasks</div>
+            </div>
+          </div>
+          <div class="dashboard-status-legend" id="report-status-details">
+            <!-- Rendered dynamically matching Dashboard -->
+          </div>
         </div>
       </div>
     </div>
@@ -53,15 +63,16 @@
     <div class="col-12 col-lg-6">
       <div class="fs-card">
         <div class="fs-card-header">
-          <h6 class="fs-h6 m-0"><i class="bi bi-people me-2" style="color:var(--fs-accent)"></i>Giờ làm theo người dùng</h6>
+          <h6 class="fs-h6 m-0"><i class="bi bi-people-fill me-2" style="color:var(--fs-accent)"></i>Giờ làm theo người dùng</h6>
         </div>
         <canvas id="report-user-chart" style="max-height:220px"></canvas>
       </div>
     </div>
     <div class="col-12 col-lg-6">
       <div class="fs-card">
-        <div class="fs-card-header">
-          <h6 class="fs-h6 m-0"><i class="bi bi-graph-up me-2" style="color:var(--fs-accent)"></i>Xu hướng hoàn thành task</h6>
+        <div class="fs-card-header d-flex align-items-center justify-content-between">
+          <h6 class="fs-h6 m-0"><i class="bi bi-graph-up-arrow me-2" style="color:#10b981"></i>Xu hướng hoàn thành task</h6>
+          <span class="fs-badge badge-success" id="report-trend-badge" style="font-size:11px"><i class="bi bi-arrow-up-right me-1"></i>Tăng trưởng tốt</span>
         </div>
         <canvas id="report-trend-chart" style="max-height:220px"></canvas>
       </div>

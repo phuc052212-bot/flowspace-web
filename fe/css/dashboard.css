@@ -1,0 +1,190 @@
+/* Dashboard only: full-width, API-driven workspace */
+#dashboard-page {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+
+#dashboard-page .dashboard-summary-row,
+#dashboard-page .dashboard-content-row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+#dashboard-page .dashboard-summary-row > [class*="col-"],
+#dashboard-page .dashboard-content-row > [class*="col-"] {
+  min-width: 0;
+}
+
+.dashboard-stat-card {
+  height: 100%;
+  min-height: 168px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dashboard-icon-accent { background: var(--fs-accent-light); color: var(--fs-accent); }
+.dashboard-icon-info { background: #dbeafe; color: var(--fs-info); }
+.dashboard-icon-danger { background: var(--fs-danger-light); color: var(--fs-danger); }
+.dashboard-icon-success { background: var(--fs-success-light); color: var(--fs-success); }
+.dashboard-icon-warning { background: var(--fs-warning-light); color: var(--fs-warning); }
+
+.dashboard-chart-card {
+  height: 300px;
+}
+
+.dashboard-chart-body {
+  position: relative;
+  height: 220px;
+}
+
+.dashboard-status-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 220px;
+  gap: 16px;
+  padding: 8px 4px;
+}
+
+.dashboard-status-chart-wrap {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  max-width: 140px;
+}
+
+.dashboard-status-chart-wrap canvas {
+  max-width: 130px !important;
+  max-height: 130px !important;
+}
+
+.dashboard-status-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1.2;
+}
+
+.dashboard-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-text-xs);
+  color: var(--fs-text-secondary);
+}
+
+.dashboard-legend-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-legend-color {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dashboard-legend-count {
+  font-weight: 600;
+  color: var(--fs-text);
+  background: var(--fs-bg-secondary);
+  padding: 2px 8px;
+  border-radius: var(--fs-radius-sm);
+  font-size: 10px;
+}
+
+.dashboard-list-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  border-radius: var(--fs-radius-lg);
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  width: 100%;
+  text-decoration: none;
+  margin-bottom: 2px;
+}
+
+.dashboard-list-item:last-child {
+  margin-bottom: 0;
+}
+
+.dashboard-list-item:hover {
+  background: var(--fs-bg-secondary) !important;
+  border-color: var(--fs-border);
+  box-shadow: var(--fs-shadow-xs);
+  transform: translateY(-1px);
+}
+
+.dashboard-task-item {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-proj-item {
+  gap: 2px;
+}
+
+.dashboard-quick-action {
+  width: 100%;
+  border: 1.5px solid var(--fs-border);
+  border-radius: var(--fs-radius);
+  background: var(--fs-bg);
+}
+
+.dashboard-quick-action:hover,
+.dashboard-quick-action:focus-visible {
+  border-color: var(--fs-accent);
+  background: var(--fs-accent-light);
+}
+
+.dashboard-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  border: 1px solid #fcd34d;
+  border-radius: var(--fs-radius);
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.dashboard-empty-chart {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--fs-text-muted);
+  font-size: var(--fs-text-sm);
+}
+
+@media (max-width: 991.98px) {
+  #page-content { padding: 24px; }
+  .dashboard-chart-card { height: 280px; }
+}
+
+@media (max-width: 575.98px) {
+  #page-content { padding: 18px 14px; }
+  .dashboard-stat-card { min-height: 158px; padding: 16px; }
+  .dashboard-chart-card { height: 260px; padding: 16px; }
+  .dashboard-chart-body,
+  .dashboard-status-chart { height: 185px; }
+  .dashboard-status-chart canvas { max-width: 140px; max-height: 140px; }
+}
+
+#dash-my-tasks,
+#dash-active-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 4px;
+}

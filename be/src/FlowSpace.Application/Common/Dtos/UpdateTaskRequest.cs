@@ -13,5 +13,7 @@ namespace FlowSpace.Application.Common.Dtos
         public DateTime? DueDate { get; set; }
         public int EstimatedHours { get; set; }
         public decimal LoggedHours { get; set; }
+        public string? Difficulty { get; set; }
+        public int? CompletionScore { get; set; }
     }
 }

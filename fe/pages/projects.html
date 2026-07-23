@@ -7,40 +7,43 @@
   <div class="fs-page-header">
     <div>
       <h1 class="fs-page-title">Quản lý Dự án</h1>
-      <p class="fs-page-subtitle" id="proj-count-label">Đang tải...</p>
+      <p class="fs-page-subtitle" id="proj-count-label">Danh sách dự án đang thực hiện</p>
     </div>
     <div class="d-flex gap-2" id="proj-header-actions">
       <!-- Toggle view -->
-      <div class="d-flex" style="border:1.5px solid var(--fs-border);border-radius:var(--fs-radius);overflow:hidden">
-        <button class="btn btn-ghost btn-icon btn-sm view-toggle active" data-view="list" title="Danh sách" style="border-radius:0">
+      <div class="fs-view-toggle-group">
+        <button class="view-toggle active" data-view="list" title="Danh sách">
           <i class="bi bi-list-ul"></i>
         </button>
-        <button class="btn btn-ghost btn-icon btn-sm view-toggle" data-view="card" title="Thẻ" style="border-radius:0;border-left:1px solid var(--fs-border)">
+        <button class="view-toggle" data-view="card" title="Thẻ">
           <i class="bi bi-grid-3x3-gap"></i>
         </button>
       </div>
-      <button class="btn btn-primary btn-sm fs-manager-only" id="proj-new-btn" style="display:none">
+      <button class="btn btn-primary btn-sm" id="proj-new-btn">
         <i class="bi bi-plus-lg"></i> Tạo dự án
       </button>
     </div>
   </div>
 
   <!-- Filters -->
-  <div class="fs-filters">
-    <input type="text" class="fs-search-input" id="proj-search" placeholder="Tìm kiếm dự án...">
-    <select class="fs-filter-select" id="proj-filter-status">
+  <div class="fs-filters d-flex align-items-center flex-wrap gap-2 mb-3" style="padding:12px;background:var(--fs-card-bg);border:1px solid var(--fs-border);border-radius:var(--fs-radius-md)">
+    <div class="position-relative" style="min-width:220px;flex:1">
+      <input type="text" class="fs-search-input" id="proj-search" placeholder="Tìm kiếm dự án..." style="height:34px;font-size:13px;padding-left:30px">
+      <i class="bi bi-search position-absolute top-50 translate-middle-y text-muted" style="left:10px;font-size:12px"></i>
+    </div>
+    <select class="fs-filter-select" id="proj-filter-status" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả trạng thái</option>
       <option value="active">Đang chạy</option>
       <option value="on_hold">Tạm dừng</option>
       <option value="done">Hoàn thành</option>
     </select>
-    <select class="fs-filter-select" id="proj-filter-priority">
+    <select class="fs-filter-select" id="proj-filter-priority" style="height:34px;font-size:13px;min-width:140px">
       <option value="">Tất cả độ ưu tiên</option>
       <option value="high">Cao</option>
       <option value="medium">Trung bình</option>
       <option value="low">Thấp</option>
     </select>
-    <button class="btn btn-ghost btn-sm" id="proj-filter-reset" style="color:var(--fs-text-muted)">
+    <button class="btn btn-ghost btn-sm" id="proj-filter-reset" style="color:var(--fs-text-muted);height:34px">
       <i class="bi bi-x-circle"></i> Xoá lọc
     </button>
   </div>
@@ -48,31 +51,42 @@
   <!-- List View -->
   <div id="proj-list-view">
     <div class="fs-card" style="padding:0;overflow:hidden">
-      <table class="fs-table" id="proj-table">
-        <thead>
-          <tr>
-            <th style="width:40px">#</th>
-            <th>Tên dự án</th>
-            <th>Trạng thái</th>
-            <th>Độ ưu tiên</th>
-            <th>Tiến độ</th>
-            <th>Thành viên</th>
-            <th>Hạn</th>
-            <th style="width:80px">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody id="proj-table-body">
-          <tr><td colspan="8"><div class="fs-empty"><div class="fs-spinner mx-auto"></div></div></td></tr>
-        </tbody>
-      </table>
+      <div class="table-responsive" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+        <table class="fs-table" id="proj-table" style="min-width:860px">
+          <thead>
+            <tr>
+              <th style="min-width:110px">Mã dự án</th>
+              <th style="min-width:180px">Tên dự án</th>
+              <th style="min-width:110px">Trạng thái</th>
+              <th style="min-width:110px">Độ ưu tiên</th>
+              <th style="min-width:130px">Tiến độ</th>
+              <th style="min-width:120px">Thành viên</th>
+              <th style="min-width:110px">Hạn</th>
+              <th style="width:80px;text-align:center">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="proj-table-body">
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <!-- Card View -->
-  <div id="proj-card-view" style="display:none">
-    <div class="row g-3" id="proj-card-grid">
+  <div id="proj-card-view" class="d-none">
+    <div class="row g-3 mb-3" id="proj-card-grid">
       <!-- Rendered by JS -->
     </div>
+  </div>
+
+  <!-- Accessible Pagination Container -->
+  <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2" id="proj-pagination-wrap">
+    <span class="fs-small text-muted" id="proj-pagination-info">Hiển thị danh sách dự án</span>
+    <nav aria-label="Phân trang kết quả tìm kiếm">
+      <ul class="pagination pagination-sm m-0" id="proj-pagination-ul">
+        <!-- Rendered dynamically by JS -->
+      </ul>
+    </nav>
   </div>
 
 </div>
@@ -122,6 +136,14 @@
         <div class="col-6 fs-form-group">
           <label class="fs-label-text" for="proj-modal-end">Ngày kết thúc</label>
           <input type="date" class="fs-input" id="proj-modal-end">
+        </div>
+        <div class="col-6 fs-form-group">
+          <label class="fs-label-text" for="proj-modal-client">Khách hàng</label>
+          <input type="text" class="fs-input" id="proj-modal-client" placeholder="VD: Công ty ABC">
+        </div>
+        <div class="col-6 fs-form-group">
+          <label class="fs-label-text" for="proj-modal-budget">Ngân sách (VNĐ)</label>
+          <input type="number" class="fs-input" id="proj-modal-budget" placeholder="VD: 50000000">
         </div>
       </div>
     </div>

@@ -34,7 +34,7 @@ namespace FlowSpace.Api.Controllers
             if (departmentId.HasValue)
                 query = query.Where(u => u.DepartmentId == departmentId.Value);
             if (roleId.HasValue)
-                query = query.Where(u => u.UserRoles.Any(ur => ur.RoleId == roleId.Value));
+                query = query.Where(u => u.UserRoles != null && u.UserRoles.Any(ur => ur.RoleId == roleId.Value));
 
             var total = await query.CountAsync();
             var users = await query
@@ -42,7 +42,7 @@ namespace FlowSpace.Api.Controllers
                 .Take(pageSize)
                 .ToListAsync();
 
-            return OkResponse(users, "Users retrieved successfully.");
+            return OkResponse<IEnumerable<User>>(users, "Users retrieved successfully.");
         }
 
         // GET /api/v1/users/{id}
@@ -51,7 +51,8 @@ namespace FlowSpace.Api.Controllers
         {
             var user = await _context.Users
                 .Include(u => u.Department)
-                .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
+                .Include(u => u.UserRoles!)
+                .ThenInclude(ur => ur.Role)
                 .FirstOrDefaultAsync(u => u.Id == id);
             if (user == null)
                 return FailResponse<User>("User not found.", StatusCodes.Status404NotFound);

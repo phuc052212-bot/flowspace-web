@@ -3,6 +3,7 @@ using System;
 using FlowSpace.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowSpace.Persistence.Migrations
 {
     [DbContext(typeof(FlowSpaceDbContext))]
-    partial class FlowSpaceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260722112629_AddDifficultyAndScoreToTask")]
+    partial class AddDifficultyAndScoreToTask
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

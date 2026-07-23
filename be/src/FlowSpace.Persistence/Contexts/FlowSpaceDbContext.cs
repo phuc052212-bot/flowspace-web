@@ -234,10 +234,10 @@ namespace FlowSpace.Persistence.Contexts
             {
                 entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });
                 entity.HasOne(rp => rp.Role)
-                      .WithMany()
+                      .WithMany(role => role.RolePermissions)
                       .HasForeignKey(rp => rp.RoleId);
                 entity.HasOne(rp => rp.Permission)
-                      .WithMany()
+                      .WithMany(permission => permission.RolePermissions)
                       .HasForeignKey(rp => rp.PermissionId);
             });
 
@@ -246,10 +246,10 @@ namespace FlowSpace.Persistence.Contexts
             {
                 entity.HasKey(ur => ur.Id);
                 entity.HasOne(ur => ur.User)
-                      .WithMany()
+                      .WithMany(user => user.UserRoles)
                       .HasForeignKey(ur => ur.UserId);
                 entity.HasOne(ur => ur.Role)
-                      .WithMany()
+                      .WithMany(role => role.UserRoles)
                       .HasForeignKey(ur => ur.RoleId);
             });
 

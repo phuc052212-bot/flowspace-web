@@ -83,7 +83,9 @@ namespace FlowSpace.Application.Services
                 EstimatedHours = request.EstimatedHours,
                 LoggedHours = 0,
                 CreatedBy = createdById,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Difficulty = request.Difficulty,
+                CompletionScore = request.CompletionScore
             };
 
             await _unitOfWork.Repository<TaskItem>().AddAsync(task);
@@ -117,6 +119,8 @@ namespace FlowSpace.Application.Services
             task.DueDate = request.DueDate;
             task.EstimatedHours = request.EstimatedHours;
             task.LoggedHours = request.LoggedHours;
+            task.Difficulty = request.Difficulty;
+            task.CompletionScore = request.CompletionScore;
 
             _unitOfWork.Repository<TaskItem>().Update(task);
             await _unitOfWork.SaveChangesAsync();

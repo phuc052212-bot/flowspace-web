@@ -123,6 +123,16 @@
     /** Viết hoa chữ cái đầu */
     capitalize: (s) => s ? s.charAt(0).toUpperCase() + s.slice(1) : '',
 
+    /** Hash string to integer */
+    hashCode(str) {
+      if (!str) return 0;
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      return hash;
+    },
+
     /** Format số bytes → "2.3 MB" */
     fileSize(bytes) {
       if (!bytes) return '0 B';
@@ -157,43 +167,138 @@
   FS.user = {
     /** Lấy user object theo id */
     get(id) {
-      if (!FS.usersCache || !FS.usersCache.length) {
-        return FS.db.find('users', id);
-      }
-      return FS.usersCache.find(u => u.id === id);
+      if (!id) return null;
+      const list = (FS.usersCache && FS.usersCache.length) ? FS.usersCache : (FS.db.get('users') || []);
+      const strId = String(id).toLowerCase();
+      return list.find(u => {
+        if (!u) return false;
+        const uId = String(u.id).toLowerCase();
+        return uId === strId || uId === strId.replace('u', '') || strId === 'u' + uId;
+      });
     },
 
     /** Render avatar HTML */
-    avatar(id, size = '') {
+    avatar(id, size = '', fallbackName = '') {
       const u = FS.user.get(id);
-      if (!u) return `<div class="fs-avatar ${size}">?</div>`;
-      return `<div class="fs-avatar ${size} ${u.color || 'av-indigo'}" title="${u.name}">${u.avatar || u.name.substring(0, 2).toUpperCase()}</div>`;
+      const name = u?.name || fallbackName || 'FlowSpace User';
+      const color = u?.color || (id ? `#${(Math.abs(FS.str.hashCode(String(id))) % 0xFFFFFF).toString(16).padStart(6, '0')}` : '#6366f1');
+      const bgStyle = color.startsWith('#') ? `background-color:${color};color:#ffffff;` : '';
+      const bgClass = !color.startsWith('#') ? color : '';
+      const initials = (u?.avatar) ? u.avatar : (name ? name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '??');
+      return `<div class="fs-avatar ${size} ${bgClass}" style="${bgStyle}" title="${FS.str.escape(name)}">${initials}</div>`;
+    },
+
+    /** Render Avatar Stack chuyên nghiệp với max limit & indicator +N */
+    avatarStack(members = [], maxDisplay = 4) {
+      if (!Array.isArray(members) || members.length === 0) {
+        return '<span class="text-muted" style="font-size:12px">—</span>';
+      }
+
+      const total = members.length;
+      const visibleMembers = members.slice(0, maxDisplay);
+      const remaining = total - maxDisplay;
+
+      let html = '<div class="fs-avatar-stack d-flex align-items-center" style="padding-left:4px">';
+      visibleMembers.forEach((m, idx) => {
+        let userId = typeof m === 'object' ? (m.id || m.userId) : m;
+        let name = typeof m === 'object' ? m.name : '';
+        const zIndex = 10 - idx;
+        const marginStyle = idx > 0 ? 'margin-left:-8px;' : '';
+        
+        let avatarHtml = FS.user.avatar(userId, 'sm', name);
+        avatarHtml = avatarHtml.replace('class="fs-avatar sm', `class="fs-avatar sm" style="z-index:${zIndex};${marginStyle}border:2px solid var(--fs-bg, #fff);box-shadow:0 2px 4px rgba(0,0,0,0.08);`);
+        html += avatarHtml;
+      });
+
+      if (remaining > 0) {
+        html += `<div class="fs-avatar sm fs-avatar-more" style="margin-left:-8px;z-index:5;border:2px solid var(--fs-bg, #fff);background-color:#475569;color:#ffffff;font-size:10px;font-weight:700;box-shadow:0 2px 4px rgba(0,0,0,0.08)" title="Thêm ${remaining} thành viên">+${remaining}</div>`;
+      }
+      html += '</div>';
+      return html;
     },
 
     /** Lấy tên user */
-    name(id) {
+    name(id, fallback = '—') {
       const u = FS.user.get(id);
-      return u ? u.name : 'Unknown';
+      return u ? u.name : fallback;
     }
   };
 
+  /* ── Data Normalizers (Data Transformers BE <-> FE) ──────── */
+  FS.data = {
+    normalizeProject(p) {
+      if (!p) return null;
+      return {
+        id: p.id,
+        code: p.code || 'FS-' + (p.id || '00'),
+        name: p.name || 'Dự án không tên',
+        description: p.description || '',
+        status: (p.status || 'active').toLowerCase(),
+        priority: (p.priority || 'medium').toLowerCase(),
+        startDate: p.startDate || null,
+        endDate: p.endDate || null,
+        progress: typeof p.progress === 'number' ? Math.min(100, Math.max(0, p.progress)) : 0,
+        ownerId: p.ownerId || '',
+        ownerName: p.ownerName || '',
+        members: Array.isArray(p.members) ? p.members : [],
+        createdAt: p.createdAt || new Date().toISOString(),
+        client: p.client || '',
+        budget: p.budget || null,
+        taskCount: p.taskCount || 0,
+        completedTaskCount: p.completedTaskCount || 0
+      };
+    },
+
+    normalizeTask(t) {
+      if (!t) return null;
+      return {
+        id: t.id,
+        code: t.code || 'TSK-' + (t.id || '00'),
+        title: t.title || 'Công việc không tên',
+        description: t.description || '',
+        projectId: t.projectId || '',
+        projectName: t.projectName || '',
+        assigneeId: t.assigneeId || '',
+        assigneeName: t.assigneeName || '',
+        assigneeAvatar: t.assigneeAvatar || '',
+        assigneeColor: t.assigneeColor || '',
+        status: (t.status || 'todo').toLowerCase(),
+        priority: (t.priority || 'medium').toLowerCase(),
+        startDate: t.startDate || null,
+        dueDate: t.dueDate || null,
+        completedAt: t.completedAt || null,
+        estimatedHours: t.estimatedHours || 0,
+        loggedHours: t.loggedHours || 0,
+        subtasks: Array.isArray(t.subtasks) ? t.subtasks : [],
+        comments: Array.isArray(t.comments) ? t.comments : [],
+        createdAt: t.createdAt || new Date().toISOString(),
+        difficulty: t.difficulty || '',
+        completionScore: t.completionScore || null
+      };
+    }
+  };
 
   /* ── Status / Priority badge helpers ────────────────────── */
   FS.badge = {
     status(status) {
+      const st = String(status || '').toLowerCase();
       const map = {
         'todo':        { cls: 'badge-neutral',  label: 'Chưa bắt đầu' },
         'in_progress': { cls: 'badge-accent',   label: 'Đang làm' },
+        'inprogress':  { cls: 'badge-accent',   label: 'Đang thực hiện' },
+        'running':     { cls: 'badge-accent',   label: 'Đang chạy' },
         'review':      { cls: 'badge-warning',  label: 'Chờ duyệt' },
         'done':        { cls: 'badge-success',  label: 'Hoàn thành' },
+        'completed':   { cls: 'badge-success',  label: 'Hoàn thành' },
         'cancelled':   { cls: 'badge-neutral',  label: 'Đã huỷ' },
         'active':      { cls: 'badge-success',  label: 'Đang chạy' },
-        'on_hold':     { cls: 'badge-warning',  label: 'Tạm dừng' },
+        'on_hold':     { cls: 'badge-warning',  label: 'Đang chờ' },
+        'onhold':      { cls: 'badge-warning',  label: 'Đang chờ' },
         'approved':    { cls: 'badge-success',  label: 'Đã duyệt' },
         'pending':     { cls: 'badge-warning',  label: 'Chờ duyệt' },
         'rejected':    { cls: 'badge-danger',   label: 'Từ chối' }
       };
-      const b = map[status] || { cls: 'badge-neutral', label: status };
+      const b = map[st] || { cls: 'badge-neutral', label: status };
       return `<span class="fs-badge ${b.cls}">${b.label}</span>`;
     },
 
@@ -209,10 +314,18 @@
 
     reqType(type) {
       const map = {
-        'leave':    { cls: 'badge-info',    label: 'Nghỉ phép' },
-        'overtime': { cls: 'badge-warning', label: 'Tăng ca' },
-        'purchase': { cls: 'badge-accent',  label: 'Mua sắm' },
-        'remote':   { cls: 'badge-neutral', label: 'Làm remote' }
+        'leave':            { cls: 'badge-info',    label: '🏖️ Nghỉ phép' },
+        'purchase':         { cls: 'badge-accent',  label: '🛒 Mua hàng' },
+        'payment':          { cls: 'badge-success', label: '💳 Thanh toán' },
+        'advance':          { cls: 'badge-warning', label: '💵 Tạm ứng' },
+        'device':           { cls: 'badge-info',    label: '💻 Cấp thiết bị' },
+        'it_support':       { cls: 'badge-neutral', label: '🛠️ Hỗ trợ IT' },
+        'tech_support':     { cls: 'badge-neutral', label: '🔧 Hỗ trợ KT' },
+        'repair':           { cls: 'badge-danger',  label: '⚡ Sửa chữa' },
+        'recruitment':      { cls: 'badge-accent',  label: '👥 Tuyển dụng' },
+        'budget_increase': { cls: 'badge-warning', label: '📈 Tăng ngân sách' },
+        'overtime':         { cls: 'badge-warning', label: '⏰ Tăng ca' },
+        'remote':           { cls: 'badge-neutral', label: '🏠 Làm remote' }
       };
       const b = map[type] || { cls: 'badge-neutral', label: type };
       return `<span class="fs-badge ${b.cls}">${b.label}</span>`;
@@ -385,5 +498,62 @@
       document.querySelectorAll('.fs-dropdown-menu.show').forEach(el => el.classList.remove('show'));
     }
   });
+
+  /**
+   * Hiển thị dialog xác nhận đẹp mắt, chuẩn Senior UI/UX
+   */
+  FS.confirm = function (options = {}) {
+    const title = options.title || "Xác nhận";
+    const message = options.message || "Bạn có chắc chắn muốn thực hiện hành động này?";
+    const confirmText = options.confirmText || "Đồng ý";
+    const cancelText = options.cancelText || "Hủy";
+    const type = options.type || "info";
+
+    const modalHtml = `
+      <div class="fs-modal-overlay" id="fs-confirm-overlay" role="dialog" aria-modal="true" style="display: none;">
+        <div class="fs-modal fs-confirm-dialog" style="max-width: 400px; padding: 24px;">
+          <div class="fs-modal-header" style="border-bottom: none; padding: 0 0 12px 0;">
+            <h5 class="m-0 d-flex align-items-center gap-2" style="font-size: var(--fs-text-lg); font-weight: 600;">
+              <i class="bi ${type === 'danger' ? 'bi-exclamation-triangle-fill text-danger' : 'bi-question-circle-fill text-primary'}" style="font-size: 20px;"></i>
+              ${title}
+            </h5>
+          </div>
+          <div class="fs-modal-body" style="padding: 0 0 20px 0;">
+            <p class="m-0 text-secondary" style="font-size: var(--fs-text-sm); line-height: 1.5; color: var(--fs-text-secondary);">${message}</p>
+          </div>
+          <div class="fs-modal-footer" style="border-top: none; padding: 0; display: flex; justify-content: flex-end; gap: 12px; background: transparent;">
+            <button class="btn btn-outline-secondary btn-sm" id="fs-confirm-cancel-btn" type="button" style="padding: 6px 16px; border-radius: var(--fs-radius-md); font-weight: 500;">${cancelText}</button>
+            <button class="btn ${type === 'danger' ? 'btn-danger' : 'btn-primary'} btn-sm" id="fs-confirm-ok-btn" type="button" style="padding: 6px 16px; border-radius: var(--fs-radius-md); font-weight: 500;">${confirmText}</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const $overlay = $(modalHtml).appendTo('body');
+    $overlay.fadeIn(150);
+    $('#fs-confirm-ok-btn').trigger('focus');
+
+    return new Promise((resolve) => {
+      $('#fs-confirm-ok-btn').on('click', () => {
+        $overlay.fadeOut(150, () => $overlay.remove());
+        if (typeof options.onConfirm === 'function') options.onConfirm();
+        resolve(true);
+      });
+
+      $('#fs-confirm-cancel-btn, #fs-confirm-overlay').on('click', function (e) {
+        if (e.target === this || e.target.id === 'fs-confirm-cancel-btn') {
+          $overlay.fadeOut(150, () => $overlay.remove());
+          resolve(false);
+        }
+      });
+
+      $(document).one('keydown.fs-confirm-esc', (e) => {
+        if (e.key === 'Escape') {
+          $overlay.fadeOut(150, () => $overlay.remove());
+          resolve(false);
+        }
+      });
+    });
+  };
 
 })(window.FS = window.FS || {});
