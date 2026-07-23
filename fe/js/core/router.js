@@ -59,6 +59,7 @@
         '<div class="page-loader"><div class="fs-spinner"></div><span>Đang tải...</span></div>'
       );
 
+      const url = `pages/${page}.html`;
       $content.load(url, async function (response, status) {
         $content.removeClass('loading');
         if (status === 'error') {
