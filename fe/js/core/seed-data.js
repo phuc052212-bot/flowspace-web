@@ -495,16 +495,16 @@
 
   /* ── 8. Time Logs ────────────────────────────────────────── */
   const TIME_LOGS = [
-    { id: 'tl1', taskId: 't1', userId: 'u2', projectId: 'p1', hours: 8, date: daysAgo(88), note: 'Phác thảo ER Diagram' },
-    { id: 'tl2', taskId: 't1', userId: 'u2', projectId: 'p1', hours: 8.5, date: daysAgo(85), note: 'Viết file migration' },
-    { id: 'tl3', taskId: 't1', userId: 'u2', projectId: 'p1', hours: 7.5, date: daysAgo(80), note: 'Test thử hiệu năng index' },
-    { id: 'tl4', taskId: 't2', userId: 'u1', projectId: 'p1', hours: 8, date: daysAgo(72), note: 'Xây dựng JWT Generator' },
-    { id: 'tl5', taskId: 't2', userId: 'u1', projectId: 'p1', hours: 8, date: daysAgo(70), note: 'Tích hợp BCrypt' },
-    { id: 'tl6', taskId: 't2', userId: 'u1', projectId: 'p1', hours: 8, date: daysAgo(68), note: 'Xử lý logout và refresh token' },
-    { id: 'tl7', taskId: 't2', userId: 'u1', projectId: 'p1', hours: 8, date: daysAgo(65), note: 'Fix bug CORS backend' },
-    { id: 'tl8', taskId: 't3', userId: 'u1', projectId: 'p1', hours: 8, date: daysAgo(12), note: 'Setup Hub SignalR' },
-    { id: 'tl9', taskId: 't3', userId: 'u1', projectId: 'p1', hours: 6, date: daysAgo(8), note: 'Xử lý ConnectionId mapping' },
-    { id: 'tl10', taskId: 't3', userId: 'u1', projectId: 'p1', hours: 6, date: daysAgo(3), note: 'Tối ưu API lấy chat message' }
+    { id: 'tl1', taskId: 't1', userId: '33333333-3333-3333-3333-333333333333', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(88), note: 'Phác thảo ER Diagram' },
+    { id: 'tl2', taskId: 't1', userId: '33333333-3333-3333-3333-333333333333', projectId: '10101010-1010-1010-1010-101010101010', hours: 8.5, date: daysAgo(85), note: 'Viết file migration' },
+    { id: 'tl3', taskId: 't1', userId: '33333333-3333-3333-3333-333333333333', projectId: '10101010-1010-1010-1010-101010101010', hours: 7.5, date: daysAgo(80), note: 'Test thử hiệu năng index' },
+    { id: 'tl4', taskId: 't2', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(72), note: 'Xây dựng JWT Generator' },
+    { id: 'tl5', taskId: 't2', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(70), note: 'Tích hợp BCrypt' },
+    { id: 'tl6', taskId: 't2', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(68), note: 'Xử lý logout và refresh token' },
+    { id: 'tl7', taskId: 't2', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(65), note: 'Fix bug CORS backend' },
+    { id: 'tl8', taskId: 't3', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 8, date: daysAgo(12), note: 'Setup Hub SignalR' },
+    { id: 'tl9', taskId: 't3', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 6, date: daysAgo(8), note: 'Xử lý ConnectionId mapping' },
+    { id: 'tl10', taskId: 't3', userId: '44444444-4444-4444-4444-444444444444', projectId: '10101010-1010-1010-1010-101010101010', hours: 6, date: daysAgo(3), note: 'Tối ưu API lấy chat message' }
   ];
 
   /* ── 9. System Logs (Audit logs) ────────────────────────── */

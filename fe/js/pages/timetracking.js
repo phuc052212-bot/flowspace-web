@@ -462,15 +462,28 @@
       const labels = Object.keys(data);
       const values = Object.values(data);
 
+      const ctx2d = ctx.getContext('2d');
+      const gradients = labels.map((_, i) => {
+        const grad = ctx2d.createLinearGradient(0, 0, ctx.offsetWidth || 500, 0);
+        const baseColor = colors[i % colors.length];
+        grad.addColorStop(0, baseColor + '88'); // Soft fade-in
+        grad.addColorStop(1, baseColor);        // Vibrant solid end
+        return grad;
+      });
+
       this._chart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels,
           datasets: [{
             data: values,
-            backgroundColor: labels.map((_, i) => colors[i % colors.length]),
-            borderRadius: 6,
-            borderSkipped: false
+            backgroundColor: gradients,
+            borderColor: labels.map((_, i) => colors[i % colors.length]),
+            borderWidth: 1.5,
+            borderRadius: 8,
+            borderSkipped: false,
+            maxBarThickness: 28,
+            barPercentage: 0.6
           }]
         },
         options: {
@@ -479,15 +492,36 @@
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            tooltip: { callbacks: { label: ctx => ctx.raw + 'h' } }
+            tooltip: {
+              backgroundColor: '#0f172a',
+              titleColor: '#ffffff',
+              titleFont: { family: 'Outfit, Inter, sans-serif', size: 12, weight: '600' },
+              bodyColor: '#e2e8f0',
+              bodyFont: { family: 'Outfit, Inter, sans-serif', size: 12 },
+              padding: 10,
+              cornerRadius: 8,
+              displayColors: true,
+              callbacks: {
+                label: context => ` Tổng giờ làm: ${context.raw}h`
+              }
+            }
           },
           scales: {
-            x: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { callback: v => v + 'h' } },
+            x: {
+              grid: { color: '#f1f5f9', drawTicks: false },
+              border: { display: false },
+              ticks: {
+                color: '#64748b',
+                font: { family: 'Outfit, Inter, sans-serif', size: 11 },
+                callback: v => v + 'h'
+              }
+            },
             y: {
               grid: { display: false },
               border: { display: false },
               ticks: {
-                font: { size: window.innerWidth < 768 ? 10 : 12 },
+                color: '#334155',
+                font: { family: 'Outfit, Inter, sans-serif', size: 12, weight: '500' },
                 callback: function (val) {
                   const label = this.getLabelForValue(val);
                   if (window.innerWidth < 768 && label.length > 14) {
