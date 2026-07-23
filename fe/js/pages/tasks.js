@@ -380,7 +380,17 @@
         }
       } catch (err) {
         console.error('API save task failed:', err);
-        FS.toast('Không thể lưu công việc lên máy chủ. Vui lòng thử lại!', 'error');
+        let errMsg = 'Không thể lưu công việc lên máy chủ.';
+        if (err.xhr && err.xhr.responseJSON) {
+          if (err.xhr.responseJSON.message) {
+            errMsg = err.xhr.responseJSON.message;
+          } else if (err.xhr.responseJSON.errors) {
+            errMsg = 'Lỗi validation: ' + JSON.stringify(err.xhr.responseJSON.errors);
+          }
+        } else if (err.statusText) {
+          errMsg += ' Chi tiết: ' + err.statusText;
+        }
+        FS.toast(errMsg, 'error');
       }
     },
 
