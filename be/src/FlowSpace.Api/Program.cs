@@ -69,22 +69,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        var allowedOrigins = builder.Configuration.GetSection("CorsSettings:AllowedOrigins").Get<string[]>();
-        if (allowedOrigins != null && allowedOrigins.Length > 0)
-        {
-            policy.WithOrigins(allowedOrigins)
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        }
-        else
-        {
-            // Fallback to localhost dev origin
-            policy.WithOrigins("http://localhost:5500")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        }
+        policy.SetIsOriginAllowed(origin => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -198,8 +186,7 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
-// Tự động chạy Seed dữ liệu mẫu khi startup (PostgreSQL) - Tạm thời tắt để tránh quá tải RAM Render lúc khởi động
-/*
+// Tự động chạy Seed dữ liệu mẫu khi startup (PostgreSQL)
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -215,7 +202,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Đã xảy ra lỗi trong tiến trình tự động Seed Database PostgreSQL.");
     }
 }
-*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
