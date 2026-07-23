@@ -108,7 +108,7 @@
       });
 
       // Xử lý click sidebar nav items
-      $(document).on('click', '[data-page]', function (e) {
+      $(document).on('click', '.fs-nav-item[data-page], .fs-route-link[data-page]', function (e) {
         e.preventDefault();
         const page = $(this).data('page');
         FS.router.go(page);
@@ -121,7 +121,7 @@
       });
       
       // Keyboard navigation for sidebar items
-      $(document).on('keydown', '[data-page]', function (e) {
+      $(document).on('keydown', '.fs-nav-item[data-page], .fs-route-link[data-page]', function (e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           $(this).trigger('click');
