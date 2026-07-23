@@ -5,7 +5,7 @@
 (function (FS) {
   'use strict';
 
-  const SEED_KEY = 'fs_seeded_v2'; // Đổi key seed để kích hoạt re-seed cho dữ liệu mới
+  const SEED_KEY = 'fs_seeded_v3'; // Đổi key seed để kích hoạt re-seed cho dữ liệu mới
 
   /* ── Helpers ───────────────────────────────────────────── */
   const now = new Date();
@@ -22,91 +22,91 @@
 
   const DEFAULT_USERS = [
     {
-      id: 'u4', name: 'Phạm Thanh Dung', email: 'admin@flowspace.demo',
+      id: '11111111-1111-1111-1111-111111111111', name: 'Phạm Thanh Dung', email: 'admin@flowspace.demo',
       password: defaultPassword, role: 'director', avatar: 'PD',
       color: '#e74c3c', department: 'Ban giám đốc', position: 'Giám đốc điều hành',
       phone: '0909123456', joinDate: '2023-03-15', active: true, emailVerified: true
     },
     {
-      id: 'u3', name: 'Lê Minh Cường', email: 'truongphong@flowspace.demo',
+      id: '22222222-2222-2222-2222-222222222222', name: 'Lê Minh Cường', email: 'truongphong@flowspace.demo',
       password: defaultPassword, role: 'manager', avatar: 'LC',
       color: '#e67e22', department: 'Kỹ thuật', position: 'Trưởng phòng Kỹ thuật',
       phone: '0923456789', joinDate: '2024-05-20', active: true, emailVerified: true
     },
     {
-      id: 'u2', name: 'Trần Thị Bình', email: 'truongnhom@flowspace.demo',
+      id: '33333333-3333-3333-3333-333333333333', name: 'Trần Thị Bình', email: 'truongnhom@flowspace.demo',
       password: defaultPassword, role: 'team_lead', avatar: 'TB',
       color: '#9b59b6', department: 'Kỹ thuật', position: 'Trưởng nhóm Phát triển',
       phone: '0934567890', joinDate: '2025-01-10', active: true, emailVerified: true
     },
     {
-      id: 'u1', name: 'Nguyễn Văn An', email: 'nhanvien@flowspace.demo',
+      id: '44444444-4444-4444-4444-444444444444', name: 'Nguyễn Văn An', email: 'nhanvien@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'NV',
       color: '#2ecc71', department: 'Kỹ thuật', position: 'Lập trình viên Fullstack',
       phone: '0901234567', joinDate: '2025-07-20', active: true, emailVerified: true
     },
     {
-      id: 'u5', name: 'Vũ Hoàng Giang', email: 'giang.vu@flowspace.demo',
+      id: '55555555-5555-5555-5555-555555555555', name: 'Vũ Hoàng Giang', email: 'giang.vu@flowspace.demo',
       password: defaultPassword, role: 'team_lead', avatar: 'VG',
       color: '#1abc9c', department: 'Kinh doanh', position: 'Trưởng nhóm Kinh doanh B2B',
       phone: '0912345678', joinDate: '2025-02-15', active: true, emailVerified: true
     },
     {
-      id: 'u6', name: 'Đỗ Thùy Trang', email: 'trang.do@flowspace.demo',
+      id: '66666666-6666-6666-6666-666666666666', name: 'Đỗ Thùy Trang', email: 'trang.do@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'DT',
       color: '#e84393', department: 'Kinh doanh', position: 'Chuyên viên Kinh doanh',
       phone: '0945678901', joinDate: '2025-06-10', active: true, emailVerified: true
     },
     {
-      id: 'u7', name: 'Bùi Anh Tuấn', email: 'tuan.bui@flowspace.demo',
+      id: '77777777-7777-7777-7777-777777777777', name: 'Bùi Anh Tuấn', email: 'tuan.bui@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'BT',
       color: '#0984e3', department: 'Kỹ thuật', position: 'Kỹ sư Cầu nối (BrSE)',
       phone: '0956789012', joinDate: '2025-08-01', active: true, emailVerified: true
     },
     {
-      id: 'u8', name: 'Phan Minh Trí', email: 'tri.phan@flowspace.demo',
+      id: '88888888-8888-8888-8888-888888888888', name: 'Phan Minh Trí', email: 'tri.phan@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'PT',
       color: '#2d3436', department: 'Kỹ thuật', position: 'Lập trình viên Mobile',
       phone: '0967890123', joinDate: '2025-09-15', active: true, emailVerified: true
     },
     {
-      id: 'u9', name: 'Lâm Mỹ Lệ', email: 'le.lam@flowspace.demo',
+      id: '99999999-9999-9999-9999-999999999999', name: 'Lâm Mỹ Lệ', email: 'le.lam@flowspace.demo',
       password: defaultPassword, role: 'manager', avatar: 'LL',
       color: '#fdcb6e', department: 'Nhân sự', position: 'Trưởng phòng Nhân sự',
       phone: '0978901234', joinDate: '2024-10-10', active: true, emailVerified: true
     },
     {
-      id: 'u10', name: 'Hoàng Kim Yến', email: 'yen.hoang@flowspace.demo',
+      id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', name: 'Hoàng Kim Yến', email: 'yen.hoang@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'HY',
       color: '#fd79a8', department: 'Nhân sự', position: 'Chuyên viên Tuyển dụng',
       phone: '0989012345', joinDate: '2025-05-05', active: true, emailVerified: true
     },
     {
-      id: 'u11', name: 'Nguyễn Hữu Nam', email: 'nam.nguyen@flowspace.demo',
+      id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', name: 'Nguyễn Hữu Nam', email: 'nam.nguyen@flowspace.demo',
       password: defaultPassword, role: 'manager', avatar: 'HN',
       color: '#6c5ce7', department: 'Marketing', position: 'Trưởng phòng Marketing',
       phone: '0990123456', joinDate: '2024-11-20', active: true, emailVerified: true
     },
     {
-      id: 'u12', name: 'Trần Quang Minh', email: 'minh.tran@flowspace.demo',
+      id: 'cccccccc-cccc-cccc-cccc-cccccccccccc', name: 'Trần Quang Minh', email: 'minh.tran@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'TM',
       color: '#00cec9', department: 'Marketing', position: 'Chuyên viên Sáng tạo nội dung',
       phone: '0901234568', joinDate: '2025-09-01', active: true, emailVerified: true
     },
     {
-      id: 'u13', name: 'Lê Thị Thu', email: 'thu.le@flowspace.demo',
+      id: 'dddddddd-dddd-dddd-dddd-dddddddddddd', name: 'Lê Thị Thu', email: 'thu.le@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'LT',
       color: '#b2bec3', department: 'Kinh doanh', position: 'Cựu nhân viên Kinh doanh',
       phone: '0902345678', joinDate: '2024-02-01', active: false, emailVerified: true
     },
     {
-      id: 'u14', name: 'Mai Tiến Dũng', email: 'dung.mai@flowspace.demo',
+      id: 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', name: 'Mai Tiến Dũng', email: 'dung.mai@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'MD',
       color: '#ffeaa7', department: 'Kỹ thuật', position: 'Thực tập sinh Lập trình',
       phone: '0903456789', joinDate: '2026-07-10', active: true, emailVerified: false
     },
     {
-      id: 'u15', name: 'Trần Minh Quân', email: 'quan.tran@flowspace.demo',
+      id: 'ffffffff-ffff-ffff-ffff-ffffffffffff', name: 'Trần Minh Quân', email: 'quan.tran@flowspace.demo',
       password: defaultPassword, role: 'employee', avatar: 'MQ',
       color: '#ff7675', department: 'Kỹ thuật', position: 'Kỹ sư hệ thống Cloud',
       phone: '0904567890', joinDate: '2025-11-15', active: true, emailVerified: true
@@ -116,52 +116,52 @@
   /* ── 2. Projects (5 dự án doanh nghiệp) ────────────────── */
   const PROJECTS = [
     {
-      id: 'p1', code: 'FS-001', name: 'FlowSpace Platform v2',
+      id: '10101010-1010-1010-1010-101010101010', code: 'FS-001', name: 'FlowSpace Platform v2',
       description: 'Nâng cấp toàn diện nền tảng FlowSpace lên phiên bản 2.0 với giao diện mới Notion-style, Kanban, Gantt chart, và Chat real-time.',
       status: 'active', priority: 'high',
       startDate: daysAgo(90), endDate: daysFromNow(90),
-      progress: 45, ownerId: 'u3',
-      members: ['u1', 'u2', 'u3', 'u7', 'u8'],
+      progress: 45, ownerId: '22222222-2222-2222-2222-222222222222',
+      members: ['44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', '77777777-7777-7777-7777-777777777777', '88888888-8888-8888-8888-888888888888'],
       tags: ['product', 'fullstack', 'realtime'],
       createdAt: daysAgo(90)
     },
     {
-      id: 'p2', code: 'MKT-SEO', name: 'Chiến dịch tối ưu SEO & Content Q3',
+      id: '20202020-2020-2020-2020-202020202020', code: 'MKT-SEO', name: 'Chiến dịch tối ưu SEO & Content Q3',
       description: 'Mở rộng tiếp cận khách hàng tiềm năng qua kênh tìm kiếm tự nhiên và sản xuất nội dung blog chất lượng cao.',
       status: 'active', priority: 'medium',
       startDate: daysAgo(30), endDate: daysFromNow(60),
-      progress: 30, ownerId: 'u11',
-      members: ['u11', 'u12'],
+      progress: 30, ownerId: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+      members: ['bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc'],
       tags: ['marketing', 'campaign', 'content'],
       createdAt: daysAgo(30)
     },
     {
-      id: 'p3', code: 'SALE-B2B', name: 'Mở rộng kinh doanh B2B miền Nam',
+      id: '30303030-3030-3030-3030-303030303030', code: 'SALE-B2B', name: 'Mở rộng kinh doanh B2B miền Nam',
       description: 'Tiếp cận các doanh nghiệp sản xuất và Logistics tại Bình Dương và Đồng Nai để cung cấp giải pháp FlowSpace SaaS.',
       status: 'active', priority: 'high',
       startDate: daysAgo(60), endDate: daysFromNow(120),
-      progress: 50, ownerId: 'u5',
-      members: ['u5', 'u6'],
+      progress: 50, ownerId: '55555555-5555-5555-5555-555555555555',
+      members: ['55555555-5555-5555-5555-555555555555', '66666666-6666-6666-6666-666666666666'],
       tags: ['sales', 'b2b', 'leads'],
       createdAt: daysAgo(60)
     },
     {
-      id: 'p4', code: 'HR-ONB', name: 'Hệ thống hóa tài liệu Onboarding',
+      id: '40404040-4040-4040-4040-404040404040', code: 'HR-ONB', name: 'Hệ thống hóa tài liệu Onboarding',
       description: 'Xây dựng cổng thông tin tài liệu và video đào tạo nhập môn trực tuyến dành cho nhân sự mới.',
       status: 'done', priority: 'low',
       startDate: daysAgo(120), endDate: daysAgo(30),
-      progress: 100, ownerId: 'u9',
-      members: ['u9', 'u10'],
+      progress: 100, ownerId: '99999999-9999-9999-9999-999999999999',
+      members: ['99999999-9999-9999-9999-999999999999', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'],
       tags: ['hr', 'onboarding', 'wiki'],
       createdAt: daysAgo(120)
     },
     {
-      id: 'p5', code: 'CLOUD-INF', name: 'Chuyển dịch Hạ tầng sang AWS Cloud',
+      id: '50505050-5050-5050-5050-505050505050', code: 'CLOUD-INF', name: 'Chuyển dịch Hạ tầng sang AWS Cloud',
       description: 'Thiết kế kiến trúc HA (High Availability) trên AWS, tích hợp CI/CD tự động và bảo mật đa lớp.',
       status: 'on_hold', priority: 'high',
       startDate: daysAgo(30), endDate: daysFromNow(150),
-      progress: 10, ownerId: 'u3',
-      members: ['u2', 'u3', 'u15'],
+      progress: 10, ownerId: '22222222-2222-2222-2222-222222222222',
+      members: ['33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'ffffffff-ffff-ffff-ffff-ffffffffffff'],
       tags: ['devops', 'aws', 'infra'],
       createdAt: daysAgo(45)
     }
@@ -171,26 +171,26 @@
   const TASKS = [
     // Project p1 (FlowSpace Platform v2)
     {
-      id: 't1', code: 'FS-T1', title: 'Thiết kế Kiến trúc Cơ sở dữ liệu PostgreSQL', projectId: 'p1', assigneeId: 'u2',
+      id: 't1', code: 'FS-T1', title: 'Thiết kế Kiến trúc Cơ sở dữ liệu PostgreSQL', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '33333333-3333-3333-3333-333333333333',
       status: 'done', priority: 'high', description: 'Chuyển đổi schema database từ SQLite sang PostgreSQL, tối ưu hóa các index cho chat real-time và tài liệu.',
       startDate: daysAgo(90), dueDate: daysAgo(75), completedAt: daysAgo(76),
       estimatedHours: 24, loggedHours: 24,
-      tags: ['database', 'architecture'], createdBy: 'u3', createdAt: daysAgo(90),
+      tags: ['database', 'architecture'], createdBy: '22222222-2222-2222-2222-222222222222', createdAt: daysAgo(90),
       subtasks: [
         { id: 'st1', title: 'Định nghĩa ER Diagram', done: true },
         { id: 'st2', title: 'Viết migration script', done: true },
         { id: 'st3', title: 'Đo kiểm hiệu năng index', done: true }
       ],
       comments: [
-        { id: 'c1', userId: 'u3', text: 'Thiết kế tốt, index đã tối ưu đúng nhu cầu truy xuất tin nhắn lớn.', createdAt: daysAgo(77) }
+        { id: 'c1', userId: '22222222-2222-2222-2222-222222222222', text: 'Thiết kế tốt, index đã tối ưu đúng nhu cầu truy xuất tin nhắn lớn.', createdAt: daysAgo(77) }
       ]
     },
     {
-      id: 't2', code: 'FS-T2', title: 'Xây dựng Core API Authentication & Authorization', projectId: 'p1', assigneeId: 'u1',
+      id: 't2', code: 'FS-T2', title: 'Xây dựng Core API Authentication & Authorization', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '44444444-4444-4444-4444-444444444444',
       status: 'done', priority: 'high', description: 'Triển khai JWT token, refresh token, băm mật khẩu bằng BCrypt và phân quyền vai trò người dùng (Role-based).',
       startDate: daysAgo(75), dueDate: daysAgo(65), completedAt: daysAgo(64),
       estimatedHours: 32, loggedHours: 32,
-      tags: ['security', 'backend'], createdBy: 'u2', createdAt: daysAgo(75),
+      tags: ['security', 'backend'], createdBy: '33333333-3333-3333-3333-333333333333', createdAt: daysAgo(75),
       dependsOn: ['t1'],
       subtasks: [
         { id: 'st4', title: 'Thiết kế Middleware kiểm tra Token', done: true },
@@ -199,11 +199,11 @@
       comments: []
     },
     {
-      id: 't3', code: 'FS-T3', title: 'Tích hợp real-time Chat sử dụng SignalR', projectId: 'p1', assigneeId: 'u1',
+      id: 't3', code: 'FS-T3', title: 'Tích hợp real-time Chat sử dụng SignalR', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '44444444-4444-4444-4444-444444444444',
       status: 'in_progress', priority: 'high', description: 'Phát triển bộ Hub gửi nhận tin nhắn tức thời, kết nối nhóm chat theo kênh dự án và chat riêng tư 1-1.',
       startDate: daysAgo(15), dueDate: daysFromNow(10), completedAt: null,
       estimatedHours: 40, loggedHours: 20,
-      tags: ['realtime', 'backend'], createdBy: 'u2', createdAt: daysAgo(16),
+      tags: ['realtime', 'backend'], createdBy: '33333333-3333-3333-3333-333333333333', createdAt: daysAgo(16),
       dependsOn: ['t2'],
       subtasks: [
         { id: 'st6', title: 'Cấu hình SignalR Hub', done: true },
@@ -211,29 +211,29 @@
         { id: 'st8', title: 'Lưu lịch sử tin nhắn vào database', done: false }
       ],
       comments: [
-        { id: 'c2', userId: 'u2', text: 'An ơi, nhớ kiểm thử hiệu năng khi mở nhiều kết nối socket nhé.', createdAt: daysAgo(10) }
+        { id: 'c2', userId: '33333333-3333-3333-3333-333333333333', text: 'An ơi, nhớ kiểm thử hiệu năng khi mở nhiều kết nối socket nhé.', createdAt: daysAgo(10) }
       ]
     },
     {
-      id: 't4', code: 'FS-T4', title: 'Tối ưu hóa UI/UX Layout Notion-style', projectId: 'p1', assigneeId: 'u2',
+      id: 't4', code: 'FS-T4', title: 'Tối ưu hóa UI/UX Layout Notion-style', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '33333333-3333-3333-3333-333333333333',
       status: 'in_progress', priority: 'medium', description: 'Cải tiến thanh Sidebar bên trái hỗ trợ Folder lồng nhau, giao diện kéo thả mượt mà trên Kanban Board.',
       startDate: daysAgo(25), dueDate: daysAgo(3), completedAt: null, // Quá hạn
       estimatedHours: 30, loggedHours: 16,
-      tags: ['frontend', 'ux'], createdBy: 'u3', createdAt: daysAgo(25),
+      tags: ['frontend', 'ux'], createdBy: '22222222-2222-2222-2222-222222222222', createdAt: daysAgo(25),
       subtasks: [
         { id: 'st9', title: 'Dựng HTML/CSS khung Notion-style', done: true },
         { id: 'st10', title: 'Tích hợp thư viện kéo thả drag-and-drop', done: false }
       ],
       comments: [
-        { id: 'c3', userId: 'u3', text: 'Cần sửa gấp phần hiển thị kéo thả trên màn hình iPad.', createdAt: daysAgo(2) }
+        { id: 'c3', userId: '22222222-2222-2222-2222-222222222222', text: 'Cần sửa gấp phần hiển thị kéo thả trên màn hình iPad.', createdAt: daysAgo(2) }
       ]
     },
     {
-      id: 't5', code: 'FS-T5', title: 'Xây dựng cổng Phê duyệt (Approvals) 4 cấp', projectId: 'p1', assigneeId: 'u2',
+      id: 't5', code: 'FS-T5', title: 'Xây dựng cổng Phê duyệt (Approvals) 4 cấp', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '33333333-3333-3333-3333-333333333333',
       status: 'review', priority: 'high', description: 'Triển khai module gửi phiếu duyệt, phân bước phê duyệt động (WorkflowRule) cho Trưởng nhóm, Trưởng phòng, Giám đốc.',
       startDate: daysAgo(10), dueDate: daysFromNow(2), completedAt: null,
       estimatedHours: 20, loggedHours: 16,
-      tags: ['workflow', 'backend'], createdBy: 'u3', createdAt: daysAgo(10),
+      tags: ['workflow', 'backend'], createdBy: '22222222-2222-2222-2222-222222222222', createdAt: daysAgo(10),
       subtasks: [
         { id: 'st11', title: 'Thiết kế các API Request / Approval', done: true },
         { id: 'st12', title: 'Đồng bộ logic duyệt tuần tự sequence', done: true }
@@ -241,11 +241,11 @@
       comments: []
     },
     {
-      id: 't6', code: 'FS-T6', title: 'Phát triển Gantt Chart hiển thị biểu đồ tiến độ', projectId: 'p1', assigneeId: 'u7',
+      id: 't6', code: 'FS-T6', title: 'Phát triển Gantt Chart hiển thị biểu đồ tiến độ', projectId: '10101010-1010-1010-1010-101010101010', assigneeId: '77777777-7777-7777-7777-777777777777',
       status: 'todo', priority: 'medium', description: 'Dựng Gantt Chart biểu diễn lịch trình và các liên kết phụ thuộc (dependencies) giữa các công việc trong dự án.',
       startDate: daysFromNow(1), dueDate: daysFromNow(15), completedAt: null,
       estimatedHours: 24, loggedHours: 0,
-      tags: ['gantt', 'frontend'], createdBy: 'u2', createdAt: daysAgo(2),
+      tags: ['gantt', 'frontend'], createdBy: '33333333-3333-3333-3333-333333333333', createdAt: daysAgo(2),
       dependsOn: ['t4'],
       subtasks: [],
       comments: []
@@ -288,7 +288,7 @@
       estimatedHours: 8 + (i % 16),
       loggedHours: status === 'done' || status === 'in_progress' ? 4 + (i % 5) : 0,
       tags: [targetProj.tags[0]],
-      createdBy: 'u4',
+      createdBy: '11111111-1111-1111-1111-111111111111',
       createdAt: daysAgo(i + 2),
       subtasks: [
         { id: `st-${i}-1`, title: 'Chuẩn bị dữ liệu đầu vào', done: status === 'done' },
