@@ -208,6 +208,9 @@
               <button class="btn btn-ghost btn-icon btn-sm task-edit-btn" data-task-id="${t.id}" title="Chỉnh sửa">
                 <i class="bi bi-pencil"></i>
               </button>
+              <button class="btn btn-ghost btn-icon btn-sm text-danger task-delete-btn" data-task-id="${t.id}" title="Xóa">
+                <i class="bi bi-trash"></i>
+              </button>
             </td>
           </tr>`;
       }).join(''));
@@ -479,6 +482,38 @@
       $(document).off('click.task-edit').on('click.task-edit', '.task-edit-btn', function (e) {
         e.stopPropagation();
         self._openModal($(this).data('task-id'));
+      });
+
+      // Delete button
+      $(document).off('click.task-delete').on('click.task-delete', '.task-delete-btn', function (e) {
+        e.stopPropagation();
+        const taskId = $(this).data('task-id');
+        const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(taskId);
+
+        if (!confirm('Bạn có chắc chắn muốn xóa công việc này không?')) return;
+
+        if (!isGuid) {
+          // Xóa offline task trong cache
+          FS.db.remove('tasks', taskId);
+          FS.toast('Đã xóa công việc tạm thời.', 'success');
+          self._loadData();
+          return;
+        }
+
+        // Gọi API xóa thật
+        FS.apiCall({
+          url: FS.API_BASE + '/api/v1/tasks/' + taskId,
+          type: 'DELETE'
+        }).then(function (res) {
+          if (res && res.success) {
+            FS.db.remove('tasks', taskId); // Cũng dọn dẹp trong offline cache
+            FS.toast('Đã xóa công việc thành công! 🗑️', 'success');
+            self._loadData();
+          }
+        }).catch(function (err) {
+          console.error('API delete task failed:', err);
+          FS.toast('Không thể xóa công việc trên máy chủ.', 'error');
+        });
       });
 
       // New task
