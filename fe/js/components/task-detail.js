@@ -107,71 +107,70 @@
               <i class="bi bi-x-lg"></i>
             </button>
           </div>
-          <div class="fs-offcanvas-body">
+          <div class="fs-offcanvas-body" style="padding: 24px 28px;">
 
             <!-- Badges row -->
-            <div class="d-flex flex-wrap gap-2 mb-4">
+            <div class="d-flex flex-wrap gap-2 mb-3">
               ${FS.badge.status(task.status)}
               ${FS.badge.priority(task.priority)}
-              ${overdue ? '<span class="fs-badge badge-danger"><i class="bi bi-exclamation-triangle"></i>Quá hạn</span>' : ''}
-            </div>
-
-            <!-- Meta grid -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
-              <div>
-                <div class="fs-label mb-1">Dự án</div>
-                <div style="font-size:13px">${FS.str.escape(task.projectName || (project ? project.name : '—'))}</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Người thực hiện</div>
-                <div class="d-flex align-items-center gap-2">
-                  ${avatarHtml}
-                  <span style="font-size:13px">${FS.str.escape(assigneeName)}</span>
-                </div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Ngày bắt đầu</div>
-                <div style="font-size:13px">${FS.date.format(task.startDate)}</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Hạn hoàn thành</div>
-                <div style="font-size:13px;${overdue ? 'color:var(--fs-danger);font-weight:600' : ''}">${FS.date.format(task.dueDate)}</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Ước tính</div>
-                <div style="font-size:13px">${task.estimatedHours || 0}h</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Đã ghi nhận</div>
-                <div style="font-size:13px">${task.loggedHours || 0}h</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Độ khó</div>
-                <div style="font-size:13px" class="fw-semibold text-dark">${FS.str.escape(task.difficulty || '—')}</div>
-              </div>
-              <div>
-                <div class="fs-label mb-1">Điểm đánh giá</div>
-                <div style="font-size:13px" class="fw-semibold ${task.completionScore ? 'text-success' : 'text-muted'}">
-                  ${task.completionScore ? task.completionScore + ' / 100' : 'Chưa chấm điểm'}
-                </div>
-              </div>
-            </div>
-
-            <!-- Progress -->
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-1">
-                <span class="fs-label">Tiến độ</span>
-                <span style="font-size:12px;font-weight:600;color:var(--fs-accent)">${progress}%</span>
-              </div>
-              <div class="fs-progress">
-                <div class="fs-progress-bar" style="width:${progress}%"></div>
-              </div>
+              ${overdue ? '<span class="fs-badge badge-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>Quá hạn</span>' : ''}
             </div>
 
             <!-- Description -->
             <div class="mb-4">
-              <div class="fs-label mb-2">Mô tả</div>
-              <p style="font-size:13px;color:var(--fs-text-secondary);line-height:1.6">${FS.str.escape(task.description) || 'Chưa có mô tả.'}</p>
+              <p style="font-size:13.5px;color:var(--fs-text-secondary);line-height:1.6;font-weight:450">${FS.str.escape(task.description) || 'Chưa có mô tả chi tiết cho công việc này.'}</p>
+            </div>
+
+            <!-- Progress -->
+            <div class="mb-4" style="background:var(--fs-bg-secondary);padding:14px 16px;border-radius:var(--fs-radius-md);border:1px solid var(--fs-border)">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="fs-label" style="font-weight:600">Tiến độ ghi nhận</span>
+                <span style="font-size:13px;font-weight:700;color:var(--fs-accent)">${progress}%</span>
+              </div>
+              <div class="fs-progress fs-progress-lg" style="height:8px;background:rgba(99,102,241,0.12)">
+                <div class="fs-progress-bar" style="width:${progress}%;background:linear-gradient(90deg, var(--fs-accent), #8b5cf6)"></div>
+              </div>
+            </div>
+
+            <!-- Meta grid -->
+            <div class="mb-4" style="display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;background:var(--fs-bg-secondary);padding:18px;border-radius:var(--fs-radius-md);border:1px solid var(--fs-border)">
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Dự án</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${FS.str.escape(task.projectName || (project ? project.name : '—'))}</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Người thực hiện</div>
+                <div class="d-flex align-items-center gap-2">
+                  ${avatarHtml}
+                  <span style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${FS.str.escape(assigneeName)}</span>
+                </div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Ngày bắt đầu</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${FS.date.format(task.startDate)}</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Hạn hoàn thành</div>
+                <div style="font-size:13px;font-weight:550;${overdue ? 'color:var(--fs-danger);font-weight:600' : 'color:var(--fs-text-heading)'}">${FS.date.format(task.dueDate)}</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Thời gian ước tính</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${task.estimatedHours || 0}h</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Đã ghi nhận</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${task.loggedHours || 0}h</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Độ khó</div>
+                <div style="font-size:13px;font-weight:600" class="text-dark">${FS.str.escape(task.difficulty || '—')}</div>
+              </div>
+              <div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Điểm đánh giá</div>
+                <div style="font-size:13px;font-weight:600" class="${task.completionScore ? 'text-success' : 'text-muted'}">
+                  ${task.completionScore ? task.completionScore + ' / 100' : 'Chưa chấm điểm'}
+                </div>
+              </div>
             </div>
 
             <hr class="fs-divider">
@@ -206,7 +205,7 @@
             </div>
 
           </div>
-          <div class="fs-offcanvas-footer">
+          <div class="fs-offcanvas-footer" style="padding: 16px 28px;">
             ${FS.auth.hasLevel(2) ? `<button class="btn btn-outline btn-sm" id="task-edit-btn"><i class="bi bi-pencil"></i> Chỉnh sửa</button>` : ''}
             <button class="btn btn-ghost btn-sm ms-auto fs-offcanvas-close" id="task-detail-close2">Đóng</button>
           </div>
@@ -216,6 +215,7 @@
 
       $('#task-detail-panel, #task-detail-backdrop').remove();
       $('body').append(html);
+      $('#task-detail-panel .fs-offcanvas-body').scrollTop(0);
 
       const self = this;
 

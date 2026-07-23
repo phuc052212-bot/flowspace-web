@@ -93,85 +93,85 @@
             </div>
             <button class="btn btn-ghost btn-icon btn-sm" id="proj-detail-close"><i class="bi bi-x-lg"></i></button>
           </div>
-          <div class="fs-offcanvas-body">
+          <div class="fs-offcanvas-body" style="padding: 24px 28px;">
 
             <!-- Status + tags -->
-            <div class="d-flex flex-wrap gap-2 mb-4">
+            <div class="d-flex flex-wrap gap-2 mb-3">
               ${FS.badge.status(project.status)}
               ${FS.badge.priority(project.priority)}
-              ${overdue ? '<span class="fs-badge badge-danger"><i class="bi bi-exclamation-triangle"></i>Quá hạn</span>' : ''}
+              ${overdue ? '<span class="fs-badge badge-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>Quá hạn</span>' : ''}
             </div>
 
             <!-- Description -->
-            <p style="font-size:13px;color:var(--fs-text-secondary);line-height:1.6;margin-bottom:20px">${FS.str.escape(project.description)}</p>
+            <p style="font-size:13.5px;color:var(--fs-text-secondary);line-height:1.6;margin-bottom:24px;font-weight:450">${FS.str.escape(project.description || 'Chưa có mô tả dự án.')}</p>
 
             <!-- Progress -->
-            <div class="mb-4">
-              <div class="d-flex justify-content-between mb-1">
-                <span class="fs-label">Tiến độ dự án</span>
-                <span style="font-size:12px;font-weight:700;color:var(--fs-accent)">${project.progress}%</span>
+            <div class="mb-4" style="background:var(--fs-bg-secondary);padding:14px 16px;border-radius:var(--fs-radius-md);border:1px solid var(--fs-border)">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="fs-label" style="font-weight:600">Tiến độ dự án</span>
+                <span style="font-size:13px;font-weight:700;color:var(--fs-accent)">${project.progress || 0}%</span>
               </div>
-              <div class="fs-progress fs-progress-lg">
-                <div class="fs-progress-bar" style="width:${project.progress}%"></div>
+              <div class="fs-progress fs-progress-lg" style="height:8px;background:rgba(99,102,241,0.12)">
+                <div class="fs-progress-bar" style="width:${project.progress || 0}%;background:linear-gradient(90deg, var(--fs-accent), #8b5cf6)"></div>
               </div>
             </div>
 
-            <!-- Meta -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+            <!-- Meta Grid -->
+            <div class="mb-4" style="display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;background:var(--fs-bg-secondary);padding:18px;border-radius:var(--fs-radius-md);border:1px solid var(--fs-border)">
               <div>
-                <div class="fs-label mb-1">Người phụ trách</div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Người phụ trách</div>
                 <div class="d-flex align-items-center gap-2">
-                  <div class="fs-avatar fs-avatar-sm" style="background-color: var(--fs-accent); color: #ffffff;">
+                  <div class="fs-avatar fs-avatar-sm" style="background-color: var(--fs-accent); color: #ffffff; font-weight: 600">
                     ${FS.str.escape(ownerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase())}
                   </div>
-                  <span style="font-size:13px">${FS.str.escape(ownerName)}</span>
+                  <span style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${FS.str.escape(ownerName)}</span>
                 </div>
               </div>
               <div>
-                <div class="fs-label mb-1">Khách hàng</div>
-                <div style="font-size:13px; font-weight: 500;" class="text-dark">${FS.str.escape(project.client || '—')}</div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Khách hàng</div>
+                <div style="font-size:13px; font-weight: 550; color:var(--fs-text-heading)">${FS.str.escape(project.client || '—')}</div>
               </div>
               <div>
-                <div class="fs-label mb-1">Ngân sách</div>
-                <div style="font-size:13px; font-weight: 600;" class="text-success">
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Ngân sách</div>
+                <div style="font-size:13px; font-weight: 600;" class="${project.budget ? 'text-success' : 'text-muted'}">
                   ${project.budget ? Number(project.budget).toLocaleString('vi-VN') + ' đ' : '—'}
                 </div>
               </div>
               <div>
-                <div class="fs-label mb-1">Số task</div>
-                <div style="font-size:13px">${doneCount}/${tasks.length} hoàn thành</div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Số công việc</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${doneCount}/${tasks.length} hoàn thành</div>
               </div>
               <div>
-                <div class="fs-label mb-1">Bắt đầu</div>
-                <div style="font-size:13px">${FS.date.format(project.startDate)}</div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Bắt đầu</div>
+                <div style="font-size:13px;font-weight:550;color:var(--fs-text-heading)">${FS.date.format(project.startDate)}</div>
               </div>
               <div>
-                <div class="fs-label mb-1">Kết thúc</div>
-                <div style="font-size:13px;${overdue?'color:var(--fs-danger);font-weight:600':''}">${FS.date.format(project.endDate)}</div>
+                <div class="fs-label mb-1" style="font-size:11px;text-transform:uppercase;color:var(--fs-text-muted)">Hạn hoàn thành</div>
+                <div style="font-size:13px;font-weight:550;${overdue?'color:var(--fs-danger);font-weight:600':'color:var(--fs-text-heading)'}">${FS.date.format(project.endDate)}</div>
               </div>
             </div>
 
             <!-- Tags -->
-            ${tagHtml ? `<div class="mb-4"><div class="fs-label mb-2">Tags</div><div class="d-flex flex-wrap gap-1">${tagHtml}</div></div>` : ''}
+            ${tagHtml ? `<div class="mb-4"><div class="fs-label mb-2" style="font-size:11px;text-transform:uppercase">Tags</div><div class="d-flex flex-wrap gap-1.5">${tagHtml}</div></div>` : ''}
 
             <!-- Members -->
             <div class="mb-4">
-              <div class="fs-label mb-2">Thành viên (${members.length})</div>
+              <div class="fs-label mb-2" style="font-size:11px;text-transform:uppercase">Thành viên (${members.length})</div>
               <div class="d-flex flex-wrap gap-3">${membersHtml}</div>
             </div>
 
-            <hr class="fs-divider">
+            <hr class="fs-divider" style="margin:20px 0">
 
             <!-- Tasks -->
             <div>
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <div class="fs-label">Danh sách task</div>
-                <button class="btn btn-ghost btn-xs" onclick="FS.router.go('tasks')">Xem tất cả <i class="bi bi-arrow-right"></i></button>
+                <div class="fs-label" style="font-size:11px;text-transform:uppercase">Danh sách task</div>
+                <button class="btn btn-ghost btn-xs" onclick="FS.router.go('tasks')" style="font-size:11.5px">Xem tất cả <i class="bi bi-arrow-right"></i></button>
               </div>
-              <div id="proj-task-list">${taskRows}</div>
+              <div id="proj-task-list" class="d-flex flex-column gap-2">${taskRows}</div>
             </div>
           </div>
-          <div class="fs-offcanvas-footer">
+          <div class="fs-offcanvas-footer" style="padding: 16px 28px;">
             ${FS.auth.hasLevel(2) ? `<button class="btn btn-outline btn-sm" onclick="FS.router.go('tasks')"><i class="bi bi-plus"></i> Thêm task</button>` : ''}
             <button class="btn btn-ghost btn-sm ms-auto" id="proj-detail-close2">Đóng</button>
           </div>
@@ -181,6 +181,7 @@
 
       $('#project-detail-panel, #proj-detail-backdrop').remove();
       $('body').append(html);
+      $('#project-detail-panel .fs-offcanvas-body').scrollTop(0);
 
       $('#proj-detail-close, #proj-detail-close2, #proj-detail-backdrop').on('click', function () {
         $('#project-detail-panel').css('right', '-520px');
