@@ -402,8 +402,13 @@
       // Edit Task button
       $(document).off('click.task-detail-edit').on('click.task-detail-edit', '#task-edit-btn', function () {
         self._hide();
-        sessionStorage.setItem('fs_open_edit_task_id', self._taskId);
-        FS.router.go('tasks');
+        const currentPage = FS.router.getCurrentPage();
+        if (currentPage === 'tasks' && FS.pages.tasks && typeof FS.pages.tasks._openModal === 'function') {
+          FS.pages.tasks._openModal(self._taskId);
+        } else {
+          sessionStorage.setItem('fs_open_edit_task_id', self._taskId);
+          FS.router.go('tasks');
+        }
       });
     },
 

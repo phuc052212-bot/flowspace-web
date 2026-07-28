@@ -190,13 +190,24 @@
 
       // Add task button click
       $('#proj-detail-add-task-btn').on('click', function () {
-        sessionStorage.setItem('fs_open_new_task_modal', 'true');
-        sessionStorage.setItem('fs_new_task_project_id', project.id);
-        sessionStorage.setItem('fs_reopen_project_detail_id', project.id);
-        // Close detail panel instantly to avoid overlapping the modal
-        $('#project-detail-panel, #proj-detail-backdrop').remove();
-        // Navigate
-        FS.router.go('tasks');
+        const currentPage = FS.router.getCurrentPage();
+        if (currentPage === 'tasks' && FS.pages.tasks && typeof FS.pages.tasks._openModal === 'function') {
+          // Close detail panel instantly to avoid overlapping the modal
+          $('#project-detail-panel, #proj-detail-backdrop').remove();
+          // Open modal and pre-fill project ID
+          FS.pages.tasks._openModal();
+          $('#task-modal-project').val(project.id);
+          // Set flag to reopen project detail after completion/cancellation
+          sessionStorage.setItem('fs_reopen_project_detail_id', project.id);
+        } else {
+          sessionStorage.setItem('fs_open_new_task_modal', 'true');
+          sessionStorage.setItem('fs_new_task_project_id', project.id);
+          sessionStorage.setItem('fs_reopen_project_detail_id', project.id);
+          // Close detail panel instantly to avoid overlapping the modal
+          $('#project-detail-panel, #proj-detail-backdrop').remove();
+          // Navigate
+          FS.router.go('tasks');
+        }
       });
 
       // Open task from project panel
