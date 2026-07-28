@@ -84,6 +84,7 @@
           for (const a of apiLogs) mergedMap.set(a.id, a);
 
           this._logsData = Array.from(mergedMap.values());
+          FS.db.set('time_logs', this._logsData);
           $('#timetracking-offline-banner').remove();
         } else if (!this._logsData.length) {
           this._logsData = FS.db.get('time_logs') || [];
@@ -234,7 +235,7 @@
 
       if (secondsRecorded >= 60) {
         const taskId = document.getElementById('tt-task-select')?.value;
-        const hours = Math.round(secondsRecorded / 360) / 10;
+        const hours = Math.max(0.1, Math.round(secondsRecorded / 360) / 10);
         const note = document.getElementById('tt-note')?.value || '';
         await this._saveLog(taskId, hours, note);
       } else {
@@ -272,6 +273,21 @@
           if ($status) $status.textContent = `Đã lưu ${hours}h — ${new Date().toLocaleTimeString('vi-VN')}`;
           const $note = document.getElementById('tt-note');
           if ($note) $note.value = '';
+          
+          if (response.data) {
+            FS.db.save('time_logs', {
+              id: response.data.id,
+              taskId: response.data.taskId,
+              taskCode: response.data.taskCode || '',
+              taskTitle: response.data.taskTitle || '',
+              userId: response.data.userId,
+              userName: response.data.userName || '',
+              hours: response.data.hours,
+              note: response.data.note || '',
+              date: response.data.date,
+              createdAt: response.data.createdAt
+            });
+          }
           await this._loadLogs();
           this._renderLogs();
           this._renderChart();
@@ -281,7 +297,28 @@
         }
       } catch (err) {
         console.error('Save time log API failed:', err);
-        FS.toast('Không thể lưu nhật ký thời gian lên máy chủ. Vui lòng thử lại!', 'error');
+        
+        // Fallback to local storage (Offline demo support)
+        const session = FS.auth.getSession();
+        const task = FS.db.find('tasks', taskId);
+        const localLog = {
+          id: 'local_' + Date.now(),
+          taskId: taskId,
+          taskCode: task ? task.code : '',
+          taskTitle: task ? task.title : '',
+          userId: session ? session.userId : '11111111-1111-1111-1111-111111111111',
+          userName: session ? session.name : 'Phạm Thanh Dung',
+          hours: hours,
+          note: note,
+          date: loggedDate ? new Date(loggedDate).toISOString() : new Date().toISOString(),
+          createdAt: new Date().toISOString()
+        };
+        FS.db.save('time_logs', localLog);
+        this._logsData = FS.db.get('time_logs') || [];
+        this._renderLogs();
+        this._renderChart();
+        
+        FS.toast('⚠️ Đã lưu nhật ký thời gian ngoại tuyến (offline)!', 'warning');
       }
     },
 
@@ -301,6 +338,20 @@
         });
         if (response && response.success) {
           FS.toast('✅ Cập nhật log thành công!', 'success');
+          if (response.data) {
+            FS.db.save('time_logs', {
+              id: response.data.id,
+              taskId: response.data.taskId,
+              taskCode: response.data.taskCode || '',
+              taskTitle: response.data.taskTitle || '',
+              userId: response.data.userId,
+              userName: response.data.userName || '',
+              hours: response.data.hours,
+              note: response.data.note || '',
+              date: response.data.date,
+              createdAt: response.data.createdAt
+            });
+          }
           await this._loadLogs();
           this._renderLogs();
           this._renderChart();
@@ -309,7 +360,22 @@
         }
       } catch (err) {
         console.error('Update time log API failed:', err);
-        FS.toast('Không thể cập nhật log thời gian.', 'error');
+        
+        // Fallback to local storage (Offline demo support)
+        const log = this._logsData.find(l => l.id === logId);
+        if (log) {
+          log.taskId = taskId;
+          log.hours = hours;
+          log.note = note;
+          if (loggedDate) log.date = new Date(loggedDate).toISOString();
+          FS.db.save('time_logs', log);
+          this._logsData = FS.db.get('time_logs') || [];
+          this._renderLogs();
+          this._renderChart();
+          FS.toast('⚠️ Đã cập nhật nhật ký thời gian ngoại tuyến (offline)!', 'warning');
+        } else {
+          FS.toast('Không thể cập nhật log thời gian.', 'error');
+        }
       }
     },
 
