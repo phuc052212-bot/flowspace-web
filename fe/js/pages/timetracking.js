@@ -93,10 +93,14 @@
                 ...a,
                 taskTitle: a.taskTitle || existing.taskTitle || '',
                 projectName: a.projectName || existing.projectName || '',
-                note: a.note || existing.note || ''
+                note: a.note || existing.note || '',
+                updatedAt: existing.updatedAt || a.createdAt || a.date || ''
               });
             } else {
-              mergedMap.set(a.id, a);
+              mergedMap.set(a.id, {
+                ...a,
+                updatedAt: a.createdAt || a.date || ''
+              });
             }
           }
 
@@ -311,7 +315,8 @@
               hours: response.data.hours,
               note: response.data.description || response.data.note || '',
               date: response.data.loggedDate || response.data.date || '',
-              createdAt: response.data.createdAt
+              createdAt: response.data.createdAt,
+              updatedAt: new Date().toISOString()
             });
           }
           await this._loadLogs();
@@ -340,7 +345,8 @@
           hours: hours,
           note: note,
           date: loggedDate ? new Date(loggedDate).toISOString() : new Date().toISOString(),
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         };
         FS.db.save('time_logs', localLog);
         this._logsData = FS.db.get('time_logs') || [];
@@ -380,7 +386,8 @@
               hours: response.data.hours,
               note: response.data.description || response.data.note || '',
               date: response.data.loggedDate || response.data.date || '',
-              createdAt: response.data.createdAt
+              createdAt: response.data.createdAt,
+              updatedAt: new Date().toISOString()
             });
           }
           await this._loadLogs();
@@ -405,6 +412,7 @@
           log.hours = hours;
           log.note = note;
           if (loggedDate) log.date = new Date(loggedDate).toISOString();
+          log.updatedAt = new Date().toISOString();
           FS.db.save('time_logs', log);
           this._logsData = FS.db.get('time_logs') || [];
           this._renderLogs();
@@ -687,7 +695,7 @@
       $(document).off('click.tt-action').on('click.tt-action', '.tt-delete-log, .tt-edit-log', async function (e) {
         e.preventDefault();
         const $btn = $(this);
-        const logId = $btn.data('log-id');
+        const logId = $btn.attr('data-log-id');
         if ($btn.hasClass('tt-delete-log')) {
           FS.confirm('Xoá bản ghi giờ này?', async () => {
             try {
