@@ -249,13 +249,24 @@
           ? FS.user.avatar(t.assigneeId, 'sm', assigneeName || 'Thành viên')
           : `<div class="fs-avatar fs-avatar-sm ${assigneeColor || 'av-indigo'}" title="${FS.str.escape(assigneeName || 'Thành viên')}">${assigneeAvatar || 'TV'}</div>`;
 
+        const editBtn = `<button class="btn btn-ghost btn-icon btn-sm task-edit-btn" data-task-id="${t.id}" title="Chỉnh sửa" style="padding: 2px; width: 24px; height: 24px;">
+          <i class="bi bi-pencil" style="font-size: 11px;"></i>
+        </button>`;
+        const deleteBtn = `<button class="btn btn-ghost btn-icon btn-sm text-danger task-delete-btn" data-task-id="${t.id}" title="Xóa" style="padding: 2px; width: 24px; height: 24px;">
+          <i class="bi bi-trash" style="font-size: 11px;"></i>
+        </button>`;
+
         return `
           <div class="col-12 col-md-6 col-lg-4 col-xl-3">
             <div class="fs-card task-row" data-task-id="${t.id}" style="cursor:pointer;height:100%;display:flex;flex-direction:column;justify-content:space-between">
               <div>
                 <div class="d-flex align-items-start justify-content-between mb-2">
                   <span class="fs-small" style="color:var(--fs-accent);font-weight:600">${t.code}</span>
-                  ${FS.badge.status(t.status)}
+                  <div class="d-flex align-items-center gap-1">
+                    ${FS.badge.status(t.status)}
+                    ${editBtn}
+                    ${deleteBtn}
+                  </div>
                 </div>
                 <h6 style="font-weight:600;font-size:14px;margin-bottom:6px;line-height:1.4;${isDone ? 'text-decoration:line-through;color:var(--fs-text-muted)' : ''}">
                   ${FS.str.escape(t.title)}
