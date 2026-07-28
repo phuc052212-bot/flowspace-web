@@ -39,6 +39,8 @@
             dueDate: t.dueDate,
             estimatedHours: t.estimatedHours || 0,
             loggedHours: t.loggedHours || 0,
+            difficulty: t.difficulty || '',
+            completionScore: t.completionScore || null,
             subtasks: t.subtasks || [],
             comments: t.comments || []
           };
