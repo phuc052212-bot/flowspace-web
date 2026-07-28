@@ -490,30 +490,30 @@
         const taskId = $(this).data('task-id');
         const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(taskId);
 
-        if (!confirm('Bạn có chắc chắn muốn xóa công việc này không?')) return;
-
-        if (!isGuid) {
-          // Xóa offline task trong cache
-          FS.db.remove('tasks', taskId);
-          FS.toast('Đã xóa công việc tạm thời.', 'success');
-          self._loadData();
-          return;
-        }
-
-        // Gọi API xóa thật
-        FS.apiCall({
-          url: FS.API_BASE + '/api/v1/tasks/' + taskId,
-          type: 'DELETE'
-        }).then(function (res) {
-          if (res && res.success) {
-            FS.db.remove('tasks', taskId); // Cũng dọn dẹp trong offline cache
-            FS.toast('Đã xóa công việc thành công! 🗑️', 'success');
+        FS.confirm('Bạn có chắc chắn muốn xóa công việc này không?', () => {
+          if (!isGuid) {
+            // Xóa offline task trong cache
+            FS.db.remove('tasks', taskId);
+            FS.toast('Đã xóa công việc tạm thời.', 'success');
             self._loadData();
+            return;
           }
-        }).catch(function (err) {
-          console.error('API delete task failed:', err);
-          FS.toast('Không thể xóa công việc trên máy chủ.', 'error');
-        });
+
+          // Gọi API xóa thật
+          FS.apiCall({
+            url: FS.API_BASE + '/api/v1/tasks/' + taskId,
+            type: 'DELETE'
+          }).then(function (res) {
+            if (res && res.success) {
+              FS.db.remove('tasks', taskId); // Cũng dọn dẹp trong offline cache
+              FS.toast('Đã xóa công việc thành công! 🗑️', 'success');
+              self._loadData();
+            }
+          }).catch(function (err) {
+            console.error('API delete task failed:', err);
+            FS.toast('Không thể xóa công việc trên máy chủ.', 'error');
+          });
+        }, { danger: true, confirmText: 'Xóa', title: 'Xóa công việc' });
       });
 
       // New task
