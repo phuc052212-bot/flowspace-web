@@ -16,6 +16,7 @@
     _logsData: [],
     _tasksList: [],
     _editingLogId: null, // null when creating, id when editing
+    _activeTaskId: null,
 
     async init() {
       // 1. Instant 0ms SWR render with local seed data (NO SPINNER!)
@@ -123,6 +124,8 @@
         if (!$('#timetracking-offline-banner').length) {
           $('#page-content').prepend('<div id="timetracking-offline-banner" class="fs-login-alert show" style="display:flex; margin-bottom:16px"><i class="bi bi-exclamation-triangle-fill"></i><span>Không thể kết nối máy chủ. Hiện đang hiển thị dữ liệu công việc tạm thời ngoại tuyến.</span></div>');
         }
+      } finally {
+        this._populateTaskSelect();
       }
     },
 
@@ -139,7 +142,10 @@
 
       const $sel1 = document.getElementById('tt-task-select');
       const $sel2 = document.getElementById('tt-modal-task');
-      if ($sel1) $sel1.innerHTML = '<option value="">-- Chọn công việc --</option>' + opts;
+      if ($sel1) {
+        $sel1.innerHTML = '<option value="">-- Chọn công việc --</option>' + opts;
+        if (this._activeTaskId) $sel1.value = this._activeTaskId;
+      }
       if ($sel2) $sel2.innerHTML = '<option value="">-- Chọn công việc --</option>' + opts;
     },
 
@@ -207,6 +213,7 @@
     _startTimer() {
       const taskId = document.getElementById('tt-task-select')?.value;
       if (!taskId) { FS.toast('Vui lòng chọn công việc trước!', 'warning'); return; }
+      this._activeTaskId = taskId;
       this._state = 'running';
       this._seconds = 0;
       this._updateDisplay();
@@ -232,9 +239,9 @@
       this._timer = null;
 
       const secondsRecorded = this._seconds;
+      const taskId = this._activeTaskId || document.getElementById('tt-task-select')?.value;
 
       if (secondsRecorded >= 60) {
-        const taskId = document.getElementById('tt-task-select')?.value;
         const hours = Math.max(0.1, Math.round(secondsRecorded / 360) / 10);
         const note = document.getElementById('tt-note')?.value || '';
         await this._saveLog(taskId, hours, note);
@@ -246,6 +253,7 @@
 
       this._state = 'idle';
       this._seconds = 0;
+      this._activeTaskId = null;
       this._updateDisplay();
       this._renderControls();
     },
