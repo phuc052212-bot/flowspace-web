@@ -195,3 +195,24 @@
 }
 .doc-version-item:last-child { border-bottom: none; }
 </style>
+
+<!-- Create Document / Folder Modal -->
+<div class="fs-modal-overlay" id="doc-create-modal" style="display:none">
+  <div class="fs-modal" style="max-width:400px">
+    <div class="fs-modal-header">
+      <h5 class="fs-h5 m-0" id="doc-create-modal-title">Tạo tài liệu mới</h5>
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="this.closest('.fs-modal-overlay').style.display='none'"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="fs-modal-body">
+      <input type="hidden" id="doc-create-type" value="doc">
+      <div class="fs-form-group">
+        <label class="fs-form-label" id="doc-create-label">Tên tài liệu</label>
+        <input type="text" class="fs-input" id="doc-create-name" placeholder="Nhập tên..." required>
+      </div>
+    </div>
+    <div class="fs-modal-footer">
+      <button class="btn btn-outline" onclick="this.closest('.fs-modal-overlay').style.display='none'">Hủy</button>
+      <button class="btn btn-primary" id="doc-create-save-btn">Xác nhận</button>
+    </div>
+  </div>
+</div>

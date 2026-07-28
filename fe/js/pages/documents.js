@@ -231,24 +231,50 @@
         input.click();
       });
 
-      // New document
+      // New folder modal trigger
+      document.getElementById('doc-new-folder-btn')?.addEventListener('click', function () {
+        $('#doc-create-type').val('folder');
+        $('#doc-create-modal-title').text('Tạo thư mục mới');
+        $('#doc-create-label').text('Tên thư mục');
+        $('#doc-create-name').val('');
+        $('#doc-create-modal').show();
+      });
+
+      // New document modal trigger
       document.getElementById('doc-new-doc-btn')?.addEventListener('click', function () {
-        const name = prompt('Tên tài liệu mới:');
-        if (!name) return;
+        $('#doc-create-type').val('doc');
+        $('#doc-create-modal-title').text('Tạo tài liệu mới');
+        $('#doc-create-label').text('Tên tài liệu');
+        $('#doc-create-name').val('');
+        $('#doc-create-modal').show();
+      });
+
+      // Modal submit handler
+      $('#doc-create-save-btn').off('click').on('click', function () {
+        const name = $('#doc-create-name').val().trim();
+        if (!name) {
+          FS.toast('Vui lòng nhập tên!', 'warning');
+          return;
+        }
+        const type = $('#doc-create-type').val();
         const doc = {
-          id: FS.db.newId(), name, type: 'doc',
+          id: FS.db.newId(),
+          name: name,
+          type: type,
           parentId: self._currentFolder,
-          content: 'Bắt đầu soạn thảo...',
+          content: type === 'folder' ? null : 'Bắt đầu soạn thảo...',
           createdBy: FS.auth.getSession()?.userId,
           createdAt: new Date().toISOString(),
           sharedWith: [],
-          versions: [
+          versions: type === 'folder' ? [] : [
             { version: '1.0', uploadedBy: FS.auth.getSession()?.userId, uploadedAt: new Date().toISOString(), note: 'Khởi tạo tài liệu' }
           ]
         };
         FS.db.save('documents', doc);
+        $('#doc-create-modal').hide();
+        self._renderTree();
         self._renderFiles();
-        FS.toast('Đã tạo tài liệu mới', 'success');
+        FS.toast(type === 'folder' ? 'Đã tạo thư mục mới' : 'Đã tạo tài liệu mới', 'success');
       });
 
       // Actions
