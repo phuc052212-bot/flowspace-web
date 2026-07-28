@@ -139,11 +139,11 @@
       const fontSize = localStorage.getItem('fs_font_size') || '14';
 
       if (theme === 'dark') {
-        $('html').addClass('dark-mode');
+        $('html').addClass('dark-mode').attr('data-bs-theme', 'dark');
         $('#theme-dark-btn').addClass('active');
         $('#theme-light-btn').removeClass('active');
       } else {
-        $('html').removeClass('dark-mode');
+        $('html').removeClass('dark-mode').removeAttr('data-bs-theme');
         $('#theme-light-btn').addClass('active');
         $('#theme-dark-btn').removeClass('active');
       }
@@ -605,9 +605,11 @@
         $('.theme-btn').removeClass('active');
         $(this).addClass('active');
         if (theme === 'dark') {
-          $('html').addClass('dark-mode');
+          $('html').addClass('dark-mode').attr('data-bs-theme', 'dark');
+          $('#theme-toggle-icon').removeClass('bi-sun').addClass('bi-moon-stars');
         } else {
-          $('html').removeClass('dark-mode');
+          $('html').removeClass('dark-mode').removeAttr('data-bs-theme');
+          $('#theme-toggle-icon').removeClass('bi-moon-stars').addClass('bi-sun');
         }
         localStorage.setItem('fs_theme', theme);
         FS.toast(`Đã chuyển sang chế độ ${theme === 'dark' ? 'tối 🌙' : 'sáng ☀️'}`, 'success');
