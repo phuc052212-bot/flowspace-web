@@ -55,6 +55,7 @@ namespace FlowSpace.Application.Common.Mappings
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.Name : string.Empty))
                 .ForMember(dest => dest.ProjectName, opt => opt.MapFrom(src => src.Project != null ? src.Project.Name : string.Empty))
                 .ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.ProjectId))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Note))
                 .ForMember(dest => dest.LoggedDate, opt => opt.MapFrom(src => src.Date));
         }
     }

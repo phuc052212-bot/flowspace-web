@@ -38,7 +38,8 @@
     },
     _isOwner(log) {
       const session = FS.auth.getSession();
-      return FS.auth.isDirector() || (log.userId && session && log.userId === session.userId);
+      if (!session) return false;
+      return FS.auth.isDirector() || (log.userId && String(log.userId).toLowerCase() === String(session.userId).toLowerCase());
     },
 
     _canEditLog(log) {

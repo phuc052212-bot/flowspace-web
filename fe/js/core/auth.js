@@ -222,7 +222,7 @@
     isEmployee() { return _session?.role === "employee"; },
     isTeamLead() { return this.getRoleLevel() >= ROLE_LEVELS.team_lead; },
     isManager() { return this.getRoleLevel() >= ROLE_LEVELS.manager; },
-    isDirector() { return _session?.role === "director"; },
+    isDirector() { return this.getRoleLevel() === 4; },
 
     /** Lấy role label */
     getRoleLabel(role) { return ROLE_LABELS[role] || role; },
