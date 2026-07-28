@@ -248,6 +248,40 @@
       $(document).off('click.subtask-add').on('click.subtask-add', '#new-subtask-btn', function () {
         const title = $('#new-subtask-input').val().trim();
         if (!title || !self._taskId) return;
+        const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(self._taskId);
+
+        const appendLocalSubtask = () => {
+          const task = FS.db.find('tasks', self._taskId);
+          if (task) {
+            if (!Array.isArray(task.subtasks)) task.subtasks = [];
+            const st = {
+              id: FS.db.newId(),
+              title: title,
+              done: false
+            };
+            task.subtasks.push(st);
+            FS.db.save('tasks', task);
+
+            const newHtml = `
+              <div class="d-flex align-items-center gap-2 py-1">
+                <input type="checkbox" class="form-check-input task-subtask-check" data-subtask-id="${st.id}" style="width:16px;height:16px;cursor:pointer">
+                <span style="font-size:13px">${FS.str.escape(st.title)}</span>
+              </div>`;
+            if ($('#task-subtasks p.text-muted').length) {
+              $('#task-subtasks').html(newHtml);
+            } else {
+              $('#task-subtasks').append(newHtml);
+            }
+            $('#new-subtask-input').val('');
+            FS.toast('Thêm sub-task thành công (Local)!', 'success');
+            self._reloadParentPage();
+          }
+        };
+
+        if (!isGuid) {
+          appendLocalSubtask();
+          return;
+        }
 
         FS.apiCall({
           url: FS.API_BASE + '/api/v1/tasks/' + self._taskId + '/subtasks',
@@ -271,8 +305,8 @@
             self._reloadParentPage();
           }
         }).catch(err => {
-          console.error('API add subtask failed:', err);
-          FS.toast('Không thể thêm sub-task.', 'error');
+          console.error('API add subtask failed, falling back to LocalStorage:', err);
+          appendLocalSubtask();
         });
       });
 
@@ -281,6 +315,50 @@
         const text = $('#task-comment-input').val().trim();
         if (!text || !self._taskId) return;
         const session = FS.auth.getSession();
+        const isGuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(self._taskId);
+
+        const appendLocalComment = () => {
+          const task = FS.db.find('tasks', self._taskId);
+          if (task) {
+            if (!Array.isArray(task.comments)) task.comments = [];
+            const newComment = {
+              id: FS.db.newId(),
+              userId: session.userId,
+              userName: session.name,
+              userAvatar: session.avatar,
+              userColor: session.color || 'av-indigo',
+              text: text,
+              createdAt: new Date().toISOString()
+            };
+            task.comments.push(newComment);
+            FS.db.save('tasks', task);
+
+            const newHtml = `
+              <div class="d-flex gap-2 mb-3">
+                <div class="fs-avatar fs-avatar-sm ${newComment.userColor}" title="${FS.str.escape(newComment.userName)}">${newComment.userAvatar}</div>
+                <div style="flex:1">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <strong style="font-size:13px">${FS.str.escape(newComment.userName)}</strong>
+                    <span class="fs-small">Vừa xong</span>
+                  </div>
+                  <div style="font-size:13px;background:var(--fs-bg-secondary);padding:8px 12px;border-radius:var(--fs-radius)">${FS.str.escape(newComment.text)}</div>
+                </div>
+              </div>`;
+            if ($('#task-comments p.text-muted').length) {
+              $('#task-comments').html(newHtml);
+            } else {
+              $('#task-comments').append(newHtml);
+            }
+            $('#task-comment-input').val('');
+            FS.toast('Đã lưu bình luận (Local)', 'success');
+            self._reloadParentPage();
+          }
+        };
+
+        if (!isGuid) {
+          appendLocalComment();
+          return;
+        }
 
         FS.apiCall({
           url: FS.API_BASE + '/api/v1/tasks/' + self._taskId + '/comments',
@@ -314,8 +392,8 @@
             self._reloadParentPage();
           }
         }).catch(err => {
-          console.error('API add comment failed:', err);
-          FS.toast('Không thể gửi bình luận.', 'error');
+          console.error('API add comment failed, falling back to LocalStorage:', err);
+          appendLocalComment();
         });
       });
 
