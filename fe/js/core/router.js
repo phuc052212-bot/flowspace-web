@@ -128,6 +128,35 @@
         }
       });
 
+      // Restore theme icon state
+      const savedTheme = localStorage.getItem('fs_theme') || 'light';
+      const $themeIcon = $('#theme-toggle-icon');
+      if (savedTheme === 'dark') {
+        $themeIcon.removeClass('bi-sun').addClass('bi-moon-stars');
+      } else {
+        $themeIcon.removeClass('bi-moon-stars').addClass('bi-sun');
+      }
+
+      // Theme toggle click handler
+      $(document).on('click', '#fs-theme-toggle', function (e) {
+        e.preventDefault();
+        const $html = $('html');
+        const isDark = $html.hasClass('dark-mode');
+        const $icon = $('#theme-toggle-icon');
+
+        if (isDark) {
+          $html.removeClass('dark-mode').removeAttr('data-bs-theme');
+          $icon.removeClass('bi-moon-stars').addClass('bi-sun');
+          localStorage.setItem('fs_theme', 'light');
+          FS.toast('Đã chuyển sang giao diện Sáng', 'success');
+        } else {
+          $html.addClass('dark-mode').attr('data-bs-theme', 'dark');
+          $icon.removeClass('bi-sun').addClass('bi-moon-stars');
+          localStorage.setItem('fs_theme', 'dark');
+          FS.toast('Đã chuyển sang giao diện Tối', 'success');
+        }
+      });
+
       // Restore sidebar state from localStorage
       const isCollapsed = localStorage.getItem('fs_sidebar_collapsed') === 'true';
       if (isCollapsed) {

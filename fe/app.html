@@ -15,6 +15,16 @@
   <link rel="stylesheet" href="css/design-system.css">
   <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem('fs_theme') || 'light';
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.documentElement.setAttribute('data-bs-theme', 'dark');
+      }
+    })();
+  </script>
 </head>
 
 <body>
@@ -163,6 +173,13 @@
             <i class="bi bi-search fs-search-icon"></i>
             <span class="fs-search-placeholder">Tìm kiếm task, dự án, người dùng...</span>
             <kbd class="fs-search-shortcut"><span>Ctrl</span><span>K</span></kbd>
+          </button>
+
+          <div class="fs-topbar-divider"></div>
+
+          <!-- Theme Toggle -->
+          <button class="fs-topbar-btn" id="fs-theme-toggle" type="button" aria-label="Đổi giao diện" title="Đổi giao diện Sáng/Tối">
+            <i class="bi bi-sun" id="theme-toggle-icon"></i>
           </button>
 
           <div class="fs-topbar-divider"></div>

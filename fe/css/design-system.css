@@ -853,3 +853,34 @@ html.dark-mode .fs-view-toggle-group .fs-view-toggle-btn:hover {
   color: var(--fs-accent) !important;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+
+/* ─── Dark Mode Overrides ────────────────────────────────── */
+html.dark-mode, html[data-bs-theme="dark"] {
+  /* Accent */
+  --fs-accent-rgb:     129, 140, 248;
+
+  /* Backgrounds */
+  --fs-bg:             #0F172A;
+  --fs-bg-secondary:   #1E293B;
+  --fs-bg-tertiary:    #334155;
+  --fs-bg-hover:       rgba(129, 140, 248, 0.08);
+
+  /* Borders */
+  --fs-border:         #334155;
+
+  /* Text */
+  --fs-text:           #F8FAFC;
+  --fs-text-secondary: #CBD5E1;
+  --fs-text-muted:     #64748B;
+  
+  /* Priority colors */
+  --fs-priority-none:    #64748B;
+
+  /* Shadows (Dark themed shadows) */
+  --fs-shadow-xs:  0 1px 2px rgba(0,0,0,0.3);
+  --fs-shadow-sm:  0 2px 8px rgba(0,0,0,0.3);
+  --fs-shadow:     0 8px 24px rgba(0,0,0,0.4);
+  --fs-shadow-md:  0 12px 32px rgba(0,0,0,0.4);
+  --fs-shadow-lg:  0 20px 48px rgba(0,0,0,0.5);
+  --fs-shadow-xl:  0 32px 64px rgba(0,0,0,0.5);
+}
