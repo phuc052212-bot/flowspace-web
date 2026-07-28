@@ -71,11 +71,13 @@
             taskId: l.taskId,
             taskCode: l.taskCode || '',
             taskTitle: l.taskTitle || '',
+            projectId: l.projectId || '',
+            projectName: l.projectName || '',
             userId: l.userId,
             userName: l.userName || '',
             hours: l.hours,
-            note: l.note || '',
-            date: l.date,
+            note: l.description || l.note || '',
+            date: l.loggedDate || l.date,
             createdAt: l.createdAt
           }));
 
@@ -288,11 +290,13 @@
               taskId: response.data.taskId,
               taskCode: response.data.taskCode || '',
               taskTitle: response.data.taskTitle || '',
+              projectId: response.data.projectId || '',
+              projectName: response.data.projectName || '',
               userId: response.data.userId,
               userName: response.data.userName || '',
               hours: response.data.hours,
-              note: response.data.note || '',
-              date: response.data.date,
+              note: response.data.description || response.data.note || '',
+              date: response.data.loggedDate || response.data.date || '',
               createdAt: response.data.createdAt
             });
           }
@@ -309,11 +313,14 @@
         // Fallback to local storage (Offline demo support)
         const session = FS.auth.getSession();
         const task = FS.db.find('tasks', taskId);
+        const project = task ? FS.db.find('projects', task.projectId) : null;
         const localLog = {
           id: 'local_' + Date.now(),
           taskId: taskId,
           taskCode: task ? task.code : '',
           taskTitle: task ? task.title : '',
+          projectId: task ? task.projectId : '',
+          projectName: project ? project.name : '',
           userId: session ? session.userId : '11111111-1111-1111-1111-111111111111',
           userName: session ? session.name : 'Phạm Thanh Dung',
           hours: hours,
@@ -352,11 +359,13 @@
               taskId: response.data.taskId,
               taskCode: response.data.taskCode || '',
               taskTitle: response.data.taskTitle || '',
+              projectId: response.data.projectId || '',
+              projectName: response.data.projectName || '',
               userId: response.data.userId,
               userName: response.data.userName || '',
               hours: response.data.hours,
-              note: response.data.note || '',
-              date: response.data.date,
+              note: response.data.description || response.data.note || '',
+              date: response.data.loggedDate || response.data.date || '',
               createdAt: response.data.createdAt
             });
           }
@@ -372,7 +381,13 @@
         // Fallback to local storage (Offline demo support)
         const log = this._logsData.find(l => l.id === logId);
         if (log) {
+          const task = FS.db.find('tasks', taskId);
+          const project = task ? FS.db.find('projects', task.projectId) : null;
           log.taskId = taskId;
+          log.taskCode = task ? task.code : '';
+          log.taskTitle = task ? task.title : '';
+          log.projectId = task ? task.projectId : '';
+          log.projectName = project ? project.name : '';
           log.hours = hours;
           log.note = note;
           if (loggedDate) log.date = new Date(loggedDate).toISOString();
