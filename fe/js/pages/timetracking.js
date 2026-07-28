@@ -85,7 +85,20 @@
           const mergedMap = new Map();
           const seedData = FS.db.get('time_logs') || [];
           for (const s of seedData) mergedMap.set(s.id, s);
-          for (const a of apiLogs) mergedMap.set(a.id, a);
+          for (const a of apiLogs) {
+            const existing = mergedMap.get(a.id);
+            if (existing) {
+              mergedMap.set(a.id, {
+                ...existing,
+                ...a,
+                taskTitle: a.taskTitle || existing.taskTitle || '',
+                projectName: a.projectName || existing.projectName || '',
+                note: a.note || existing.note || ''
+              });
+            } else {
+              mergedMap.set(a.id, a);
+            }
+          }
 
           this._logsData = Array.from(mergedMap.values());
           FS.db.set('time_logs', this._logsData);
@@ -432,7 +445,7 @@
       const session = FS.auth.getSession();
       const now = new Date();
 
-      return this._logsData.filter(l => {
+      const filtered = this._logsData.filter(l => {
         if (!FS.auth.isDirector() && l.userId !== session?.userId) return false;
         if (this._period === 'week') {
           const weekStart = new Date(now);
@@ -444,6 +457,12 @@
           return new Date(l.date).getMonth() === now.getMonth() && new Date(l.date).getFullYear() === now.getFullYear();
         }
         return true;
+      });
+
+      return filtered.sort((a, b) => {
+        const dateA = new Date(a.date || a.createdAt || 0);
+        const dateB = new Date(b.date || b.createdAt || 0);
+        return dateB - dateA;
       });
     },
 
@@ -665,27 +684,27 @@
       });
 
       // Delete / Edit log
-      document.addEventListener('click', async function (e) {
-        const delBtn = e.target.closest('.tt-delete-log');
-        const editBtn = e.target.closest('.tt-edit-log');
-        if (delBtn) {
-          const logId = delBtn.dataset.logId;
+      $(document).off('click.tt-action').on('click.tt-action', '.tt-delete-log, .tt-edit-log', async function (e) {
+        e.preventDefault();
+        const $btn = $(this);
+        const logId = $btn.data('log-id');
+        if ($btn.hasClass('tt-delete-log')) {
           FS.confirm('Xoá bản ghi giờ này?', async () => {
             try {
               await FS.apiCall({
                 url: FS.API_BASE + '/api/v1/timetracking/logs/' + logId,
                 type: 'DELETE'
               });
-            } catch {
-              FS.db.remove('time_logs', logId);
+            } catch (err) {
+              console.warn('API delete failed, removing locally:', err);
             }
+            FS.db.remove('time_logs', logId);
             await self._loadLogs();
             self._renderLogs();
             self._renderChart();
             FS.toast('Đã xoá bản ghi giờ làm', 'success');
           }, { danger: true, confirmText: 'Xoá' });
-        } else if (editBtn) {
-          const logId = editBtn.dataset.logId;
+        } else if ($btn.hasClass('tt-edit-log')) {
           const log = self._logsData.find(l => l.id === logId);
           if (log) {
             self._openEditModal(log);
