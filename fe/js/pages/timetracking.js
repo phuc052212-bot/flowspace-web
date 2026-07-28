@@ -740,7 +740,6 @@
       };
 
       document.getElementById('tt-add-manual-btn')?.addEventListener('click', openManualModal);
-      document.getElementById('tt-manual-log-btn')?.addEventListener('click', openManualModal);
       document.getElementById('tt-modal-close')?.addEventListener('click', () => {
         const $ov = document.getElementById('tt-modal-overlay');
         if ($ov) $ov.style.display = 'none';
