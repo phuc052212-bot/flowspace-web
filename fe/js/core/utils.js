@@ -508,7 +508,21 @@
   /**
    * Hiển thị dialog xác nhận đẹp mắt, chuẩn Senior UI/UX
    */
-  FS.confirm = function (options = {}) {
+  FS.confirm = function (optionsOrMessage = {}, onConfirm = null, opts = {}) {
+    let options = {};
+    if (typeof optionsOrMessage === 'string') {
+      options = {
+        message: optionsOrMessage,
+        onConfirm: onConfirm,
+        confirmText: opts.confirmText || "Đồng ý",
+        cancelText: opts.cancelText || "Hủy",
+        title: opts.title || "Xác nhận",
+        type: opts.danger ? "danger" : "info"
+      };
+    } else {
+      options = optionsOrMessage;
+    }
+
     const title = options.title || "Xác nhận";
     const message = options.message || "Bạn có chắc chắn muốn thực hiện hành động này?";
     const confirmText = options.confirmText || "Đồng ý";
