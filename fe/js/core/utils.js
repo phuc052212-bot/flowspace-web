@@ -169,7 +169,29 @@
     get(id) {
       if (!id) return null;
       const list = (FS.usersCache && FS.usersCache.length) ? FS.usersCache : (FS.db.get('users') || []);
-      const strId = String(id).toLowerCase();
+      let strId = String(id).toLowerCase();
+      
+      const uMap = {
+        'u1': '11111111-1111-1111-1111-111111111111',
+        'u2': '22222222-2222-2222-2222-222222222222',
+        'u3': '33333333-3333-3333-3333-333333333333',
+        'u4': '44444444-4444-4444-4444-444444444444',
+        'u5': '55555555-5555-5555-5555-555555555555',
+        'u6': '66666666-6666-6666-6666-666666666666',
+        'u7': '77777777-7777-7777-7777-777777777777',
+        'u8': '88888888-8888-8888-8888-888888888888',
+        'u9': '99999999-9999-9999-9999-999999999999',
+        'u10': 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+        'u11': 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+        'u12': 'cccccccc-cccc-cccc-cccc-cccccccccccc',
+        'u13': 'dddddddd-dddd-dddd-dddd-dddddddddddd',
+        'u14': 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee',
+        'u15': 'ffffffff-ffff-ffff-ffff-ffffffffffff'
+      };
+      if (uMap[strId]) {
+        strId = uMap[strId];
+      }
+
       return list.find(u => {
         if (!u) return false;
         const uId = String(u.id).toLowerCase();
