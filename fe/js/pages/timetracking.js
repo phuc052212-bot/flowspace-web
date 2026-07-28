@@ -134,6 +134,7 @@
             title: t.title,
             projectId: t.projectId
           }));
+          FS.db.set('tasks', this._tasksList);
           $('#timetracking-offline-banner').remove();
         } else {
           this._tasksList = [];
@@ -303,17 +304,19 @@
           if ($note) $note.value = '';
           
           if (response.data) {
+            const task = this._tasksList.find(t => t.id === response.data.taskId) || FS.db.find('tasks', response.data.taskId);
+            const project = task ? FS.db.find('projects', task.projectId) : null;
             FS.db.save('time_logs', {
               id: response.data.id,
               taskId: response.data.taskId,
-              taskCode: response.data.taskCode || '',
-              taskTitle: response.data.taskTitle || '',
-              projectId: response.data.projectId || '',
-              projectName: response.data.projectName || '',
+              taskCode: response.data.taskCode || (task ? task.code : ''),
+              taskTitle: response.data.taskTitle || (task ? task.title : ''),
+              projectId: response.data.projectId || (task ? task.projectId : ''),
+              projectName: response.data.projectName || (project ? project.name : ''),
               userId: response.data.userId,
               userName: response.data.userName || '',
               hours: response.data.hours,
-              note: response.data.description || response.data.note || '',
+              note: response.data.description || response.data.note || note || '',
               date: response.data.loggedDate || response.data.date || '',
               createdAt: response.data.createdAt,
               updatedAt: new Date().toISOString()
@@ -331,7 +334,7 @@
         
         // Fallback to local storage (Offline demo support)
         const session = FS.auth.getSession();
-        const task = FS.db.find('tasks', taskId);
+        const task = this._tasksList.find(t => t.id === taskId) || FS.db.find('tasks', taskId);
         const project = task ? FS.db.find('projects', task.projectId) : null;
         const localLog = {
           id: 'local_' + Date.now(),
@@ -374,17 +377,19 @@
         if (response && response.success) {
           FS.toast('✅ Cập nhật log thành công!', 'success');
           if (response.data) {
+            const task = this._tasksList.find(t => t.id === response.data.taskId) || FS.db.find('tasks', response.data.taskId);
+            const project = task ? FS.db.find('projects', task.projectId) : null;
             FS.db.save('time_logs', {
               id: response.data.id,
               taskId: response.data.taskId,
-              taskCode: response.data.taskCode || '',
-              taskTitle: response.data.taskTitle || '',
-              projectId: response.data.projectId || '',
-              projectName: response.data.projectName || '',
+              taskCode: response.data.taskCode || (task ? task.code : ''),
+              taskTitle: response.data.taskTitle || (task ? task.title : ''),
+              projectId: response.data.projectId || (task ? task.projectId : ''),
+              projectName: response.data.projectName || (project ? project.name : ''),
               userId: response.data.userId,
               userName: response.data.userName || '',
               hours: response.data.hours,
-              note: response.data.description || response.data.note || '',
+              note: response.data.description || response.data.note || note || '',
               date: response.data.loggedDate || response.data.date || '',
               createdAt: response.data.createdAt,
               updatedAt: new Date().toISOString()
@@ -402,7 +407,7 @@
         // Fallback to local storage (Offline demo support)
         const log = this._logsData.find(l => l.id === logId);
         if (log) {
-          const task = FS.db.find('tasks', taskId);
+          const task = this._tasksList.find(t => t.id === taskId) || FS.db.find('tasks', taskId);
           const project = task ? FS.db.find('projects', task.projectId) : null;
           log.taskId = taskId;
           log.taskCode = task ? task.code : '';
