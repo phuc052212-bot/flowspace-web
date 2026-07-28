@@ -35,6 +35,13 @@
           $('#task-modal-project').val(defaultProjId);
         }
       }
+
+      // 4. Auto-open edit modal if navigated from task detail "Chỉnh sửa" button
+      const editTaskId = sessionStorage.getItem('fs_open_edit_task_id');
+      if (editTaskId) {
+        sessionStorage.removeItem('fs_open_edit_task_id');
+        this._openModal(editTaskId);
+      }
     },
 
     async _loadData() {

@@ -402,9 +402,8 @@
       // Edit Task button
       $(document).off('click.task-detail-edit').on('click.task-detail-edit', '#task-edit-btn', function () {
         self._hide();
-        if (FS.pages.tasks && FS.pages.tasks._openModal) {
-          FS.pages.tasks._openModal(self._taskId);
-        }
+        sessionStorage.setItem('fs_open_edit_task_id', self._taskId);
+        FS.router.go('tasks');
       });
     },
 
