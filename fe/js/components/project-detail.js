@@ -192,9 +192,9 @@
       $('#proj-detail-add-task-btn').on('click', function () {
         sessionStorage.setItem('fs_open_new_task_modal', 'true');
         sessionStorage.setItem('fs_new_task_project_id', project.id);
-        // Close detail panel
-        $('#project-detail-panel').css('right', '-520px');
-        setTimeout(() => $('#project-detail-panel, #proj-detail-backdrop').remove(), 300);
+        sessionStorage.setItem('fs_reopen_project_detail_id', project.id);
+        // Close detail panel instantly to avoid overlapping the modal
+        $('#project-detail-panel, #proj-detail-backdrop').remove();
         // Navigate
         FS.router.go('tasks');
       });

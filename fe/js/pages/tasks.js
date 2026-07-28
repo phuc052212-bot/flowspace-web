@@ -407,6 +407,15 @@
           
           $('#task-modal-overlay').hide();
           await this._loadData();
+
+          // Re-open project detail if flag is set
+          const reopenProjId = sessionStorage.getItem('fs_reopen_project_detail_id');
+          if (reopenProjId) {
+            sessionStorage.removeItem('fs_reopen_project_detail_id');
+            if (FS.projectDetail && typeof FS.projectDetail.open === 'function') {
+              FS.projectDetail.open(reopenProjId);
+            }
+          }
           return;
         } else {
           FS.toast('Máy chủ phản hồi lỗi khi lưu công việc.', 'error');
@@ -553,9 +562,21 @@
       });
 
       // Modal controls
-      $('#task-modal-close, #task-modal-cancel').off('click').on('click', () => $('#task-modal-overlay').hide());
+      const handleCloseModal = () => {
+        $('#task-modal-overlay').hide();
+        // Re-open project detail if flag is set
+        const reopenProjId = sessionStorage.getItem('fs_reopen_project_detail_id');
+        if (reopenProjId) {
+          sessionStorage.removeItem('fs_reopen_project_detail_id');
+          if (FS.projectDetail && typeof FS.projectDetail.open === 'function') {
+            FS.projectDetail.open(reopenProjId);
+          }
+        }
+      };
+
+      $('#task-modal-close, #task-modal-cancel').off('click').on('click', handleCloseModal);
       $('#task-modal-overlay').off('click').on('click', function (e) {
-        if ($(e.target).is('#task-modal-overlay')) $('#task-modal-overlay').hide();
+        if ($(e.target).is('#task-modal-overlay')) handleCloseModal();
       });
       $('#task-modal-save').off('click').on('click', () => self._saveModal());
     }
