@@ -133,8 +133,14 @@
         html += `<li class="page-item"><a class="page-link task-page-link" data-page="${this._page - 1}" href="#">&laquo; Trước</a></li>`;
       }
 
-      // Danh sách trang
-      for (let p = 1; p <= totalPages; p++) {
+      // Danh sách trang (Hiển thị tối đa 3 trang quanh trang hiện tại)
+      let startPage = Math.max(1, this._page - 1);
+      let endPage = Math.min(totalPages, startPage + 2);
+      if (endPage - startPage < 2) {
+        startPage = Math.max(1, endPage - 2);
+      }
+
+      for (let p = startPage; p <= endPage; p++) {
         if (p === this._page) {
           html += `<li class="page-item active" aria-current="page"><span class="page-link">${p}</span></li>`;
         } else {
