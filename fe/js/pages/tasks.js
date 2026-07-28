@@ -22,6 +22,19 @@
 
       // 2. Fetch live data from backend API in background & sync seamlessly
       await this._loadData();
+
+      // 3. Auto-open modal if navigated from project detail "Thêm task" button
+      const openModalFlag = sessionStorage.getItem('fs_open_new_task_modal');
+      if (openModalFlag === 'true') {
+        sessionStorage.removeItem('fs_open_new_task_modal');
+        const defaultProjId = sessionStorage.getItem('fs_new_task_project_id');
+        sessionStorage.removeItem('fs_new_task_project_id');
+
+        this._openModal();
+        if (defaultProjId) {
+          $('#task-modal-project').val(defaultProjId);
+        }
+      }
     },
 
     async _loadData() {

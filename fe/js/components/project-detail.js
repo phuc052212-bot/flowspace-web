@@ -172,7 +172,7 @@
             </div>
           </div>
           <div class="fs-offcanvas-footer" style="padding: 16px 28px;">
-            ${FS.auth.hasLevel(2) ? `<button class="btn btn-outline btn-sm" onclick="FS.router.go('tasks')"><i class="bi bi-plus"></i> Thêm task</button>` : ''}
+            ${FS.auth.hasLevel(2) ? `<button class="btn btn-outline btn-sm" id="proj-detail-add-task-btn"><i class="bi bi-plus"></i> Thêm task</button>` : ''}
             <button class="btn btn-ghost btn-sm ms-auto" id="proj-detail-close2">Đóng</button>
           </div>
         </div>
@@ -186,6 +186,17 @@
       $('#proj-detail-close, #proj-detail-close2, #proj-detail-backdrop').on('click', function () {
         $('#project-detail-panel').css('right', '-520px');
         setTimeout(() => $('#project-detail-panel, #proj-detail-backdrop').remove(), 300);
+      });
+
+      // Add task button click
+      $('#proj-detail-add-task-btn').on('click', function () {
+        sessionStorage.setItem('fs_open_new_task_modal', 'true');
+        sessionStorage.setItem('fs_new_task_project_id', project.id);
+        // Close detail panel
+        $('#project-detail-panel').css('right', '-520px');
+        setTimeout(() => $('#project-detail-panel, #proj-detail-backdrop').remove(), 300);
+        // Navigate
+        FS.router.go('tasks');
       });
 
       // Open task from project panel
