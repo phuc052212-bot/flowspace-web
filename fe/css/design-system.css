@@ -588,7 +588,9 @@ img { max-width: 100%; display: block; }
   width: 100%;
   max-width: 520px;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   animation: fs-modal-in 0.25s ease;
 }
 @keyframes fs-modal-in {
@@ -601,14 +603,20 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   padding: 20px 24px 16px;
   border-bottom: 1px solid var(--fs-border);
+  flex-shrink: 0;
 }
-.fs-modal-body { padding: 20px 24px; }
+.fs-modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
 .fs-modal-footer {
   padding: 16px 24px;
   border-top: 1px solid var(--fs-border);
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 /* ─── Offcanvas ──────────────────────────────────────────── */
