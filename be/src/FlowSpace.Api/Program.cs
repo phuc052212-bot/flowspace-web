@@ -141,9 +141,9 @@ builder.Services.AddAuthentication(authOptions =>
 // Configure Authorization Policies
 builder.Services.AddAuthorization(authPolicies =>
 {
-    authPolicies.AddPolicy("DirectorOnly", policy => policy.RequireRole("Director"));
-    authPolicies.AddPolicy("ManagerOrAbove", policy => policy.RequireRole("Director", "Manager"));
-    authPolicies.AddPolicy("TeamLeadOrAbove", policy => policy.RequireRole("Director", "Manager", "TeamLead"));
+    authPolicies.AddPolicy("DirectorOnly", policy => policy.RequireRole("director", "Director"));
+    authPolicies.AddPolicy("ManagerOrAbove", policy => policy.RequireRole("director", "Director", "manager", "Manager"));
+    authPolicies.AddPolicy("TeamLeadOrAbove", policy => policy.RequireRole("director", "Director", "manager", "Manager", "team_lead", "TeamLead"));
 });
 
 // Swagger Setup
