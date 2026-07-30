@@ -28,29 +28,30 @@
   // Restore the authenticated session after navigation from login.html to app.html.
   let _session = loadSession();
 
-  const ROLE_LEVELS = { employee: 1, team_lead: 2, manager: 3, director: 4 };
+  const ROLE_LEVELS = { client: 0, employee: 1, team_lead: 2, manager: 3, director: 4 };
   const ROLE_LABELS = {
+    client: "Khách hàng",
     employee: "Nhân viên",
     team_lead: "Trưởng nhóm",
     manager: "Trưởng phòng",
     director: "Ban giám đốc",
   };
   const PAGE_ACCESS = {
-    dashboard: 1,
-    projects: 1,
-    tasks: 1,
-    kanban: 1,
+    dashboard: 0,
+    projects: 0,
+    tasks: 0,
+    kanban: 0,
     gantt: 2,
-    calendar: 1,
-    documents: 1,
-    chat: 1,
+    calendar: 0,
+    documents: 0,
+    chat: 0,
     requests: 1,
     approvals: 2,
     timetracking: 1,
     reports: 3,
     users: 4,
     logs: 4,
-    settings: 1,
+    settings: 0,
   };
 
   // Always use direct Render backend URL
@@ -205,11 +206,13 @@
     /** Lấy role level của user hiện tại */
     getRoleLevel() {
       if (!_session || !_session.role) return 1;
-      const r = String(_session.role).toLowerCase().replace(/[^a-z]/g, '');
+      const r = String(_session.role).toLowerCase().replace(/[^a-z_]/g, '');
       if (r.includes('admin') || r.includes('director') || r.includes('giamdoc')) return 4;
       if (r.includes('manager') || r.includes('truongphong')) return 3;
       if (r.includes('lead') || r.includes('truongnhom')) return 2;
-      return ROLE_LEVELS[String(_session.role).toLowerCase()] || 1;
+      if (r.includes('client') || r.includes('khachhang')) return 0;
+      const level = ROLE_LEVELS[r];
+      return level !== undefined ? level : 1;
     },
 
     /** Kiểm tra có quyền truy cập trang không */
@@ -219,6 +222,7 @@
     hasLevel(minLevel) { return this.getRoleLevel() >= minLevel; },
 
     /** Tiện ích kiểm tra role */
+    isClient() { return this.getRoleLevel() === 0; },
     isEmployee() { return _session?.role === "employee"; },
     isTeamLead() { return this.getRoleLevel() >= ROLE_LEVELS.team_lead; },
     isManager() { return this.getRoleLevel() >= ROLE_LEVELS.manager; },

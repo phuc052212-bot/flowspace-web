@@ -353,6 +353,11 @@
       if (level < 4) { $('.fs-nav-users').hide(); $('.fs-nav-logs').hide(); }
       // Admin section header
       if (level < 3) $('.fs-admin-section').hide();
+      // Client (level < 1): hide Time tracking & Requests
+      if (level < 1) {
+        $('.fs-nav-item[data-page="timetracking"]').hide();
+        $('.fs-nav-item[data-page="requests"]').hide();
+      }
 
       // Pending approvals badge
       if (level >= 2) {

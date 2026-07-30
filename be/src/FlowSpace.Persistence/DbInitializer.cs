@@ -151,7 +151,8 @@ namespace FlowSpace.Persistence
                 new User { Id = Guid.Parse("99999999-9999-9999-9999-999999999999"), Name = "Lâm Mỹ Lệ", FullName = "Lâm Mỹ Lệ", Email = "le.lam@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "manager", Avatar = "LL", Color = "#fdcb6e", DepartmentId = departments.First(d => d.Name == "Nhân sự").Id, Department = departments.First(d => d.Name == "Nhân sự"), Position = "Trưởng phòng Nhân sự", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddYears(-2), JoinDate = DateTime.UtcNow.AddYears(-2) },
                 new User { Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), Name = "Hoàng Kim Yến", FullName = "Hoàng Kim Yến", Email = "yen.hoang@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "employee", Avatar = "HY", Color = "#fd79a8", DepartmentId = departments.First(d => d.Name == "Nhân sự").Id, Department = departments.First(d => d.Name == "Nhân sự"), Position = "Chuyên viên Tuyển dụng", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddMonths(-5), JoinDate = DateTime.UtcNow.AddMonths(-5) },
                 new User { Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), Name = "Nguyễn Hữu Nam", FullName = "Nguyễn Hữu Nam", Email = "nam.nguyen@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "manager", Avatar = "HN", Color = "#6c5ce7", DepartmentId = departments.First(d => d.Name == "Marketing").Id, Department = departments.First(d => d.Name == "Marketing"), Position = "Trưởng phòng Marketing", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddYears(-1), JoinDate = DateTime.UtcNow.AddYears(-1) },
-                new User { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), Name = "Trần Quang Minh", FullName = "Trần Quang Minh", Email = "minh.tran@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "employee", Avatar = "TM", Color = "#00cec9", DepartmentId = departments.First(d => d.Name == "Marketing").Id, Department = departments.First(d => d.Name == "Marketing"), Position = "Chuyên viên Sáng tạo nội dung", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddMonths(-4), JoinDate = DateTime.UtcNow.AddMonths(-4) }
+                new User { Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"), Name = "Trần Quang Minh", FullName = "Trần Quang Minh", Email = "minh.tran@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "employee", Avatar = "TM", Color = "#00cec9", DepartmentId = departments.First(d => d.Name == "Marketing").Id, Department = departments.First(d => d.Name == "Marketing"), Position = "Chuyên viên Sáng tạo nội dung", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddMonths(-4), JoinDate = DateTime.UtcNow.AddMonths(-4) },
+                new User { Id = Guid.Parse("99999999-cccc-bbbb-aaaa-000000000000"), Name = "Nguyễn Khách Hàng", FullName = "Nguyễn Khách Hàng", Email = "khachhang@flowspace.demo", PasswordHash = defaultPasswordHash, Role = "client", Avatar = "KH", Color = "#00cec9", DepartmentId = null, Department = null, Position = "Khách hàng liên kết", Active = true, IsEmailVerified = true, EmailVerifiedAt = DateTime.UtcNow.AddYears(-1), JoinDate = DateTime.UtcNow.AddYears(-1) }
             };
         }
 
@@ -173,7 +174,7 @@ namespace FlowSpace.Persistence
             var p4 = new Project { Id = Guid.Parse("40404040-4040-4040-4040-404040404040"), Code = "HR-ONB", Name = "Hệ thống hóa tài liệu Onboarding", Description = "Xây dựng cổng thông tin tài liệu và video đào tạo nhập môn trực tuyến dành cho nhân sự mới.", Status = ProjectStatus.Done, Priority = ProjectPriority.Low, StartDate = DateTime.UtcNow.AddMonths(-4), EndDate = DateTime.UtcNow.AddMonths(-1), OwnerId = users[8].Id, CreatedAt = DateTime.UtcNow.AddMonths(-4), Progress = 100, Client = "FlowSpace Internal", Budget = 30000000 };
             var p5 = new Project { Id = Guid.Parse("50505050-5050-5050-5050-505050505050"), Code = "CLOUD-INF", Name = "Chuyển dịch Hạ tầng sang AWS Cloud", Description = "Thiết kế kiến trúc HA (High Availability) trên AWS, tích hợp CI/CD tự động và bảo mật đa lớp.", Status = ProjectStatus.OnHold, Priority = ProjectPriority.High, StartDate = DateTime.UtcNow.AddMonths(-1), EndDate = DateTime.UtcNow.AddMonths(5), OwnerId = users[1].Id, CreatedAt = DateTime.UtcNow.AddMonths(-1), Client = "Ngân hàng Techcombank", Budget = 1200000000 };
 
-            p1.Members = new List<User> { users[1], users[2], users[3], users[6], users[7] };
+            p1.Members = new List<User> { users[1], users[2], users[3], users[6], users[7], users[12] };
             p2.Members = new List<User> { users[10], users[11] };
             p3.Members = new List<User> { users[4], users[5] };
             p4.Members = new List<User> { users[8], users[9] };
@@ -401,7 +402,8 @@ namespace FlowSpace.Persistence
                 new Role { Id = Guid.NewGuid(), Name = "director" },
                 new Role { Id = Guid.NewGuid(), Name = "manager" },
                 new Role { Id = Guid.NewGuid(), Name = "team_lead" },
-                new Role { Id = Guid.NewGuid(), Name = "employee" }
+                new Role { Id = Guid.NewGuid(), Name = "employee" },
+                new Role { Id = Guid.NewGuid(), Name = "client" }
             };
         }
     }

@@ -5,7 +5,7 @@
 (function (FS) {
   'use strict';
 
-  const SEED_KEY = 'fs_seeded_v3'; // Đổi key seed để kích hoạt re-seed cho dữ liệu mới
+  const SEED_KEY = 'fs_seeded_v4'; // Đổi key seed để kích hoạt re-seed cho dữ liệu mới
 
   /* ── Helpers ───────────────────────────────────────────── */
   const now = new Date();
@@ -44,6 +44,12 @@
       password: defaultPassword, role: 'employee', avatar: 'NV',
       color: '#2ecc71', department: 'Kỹ thuật', position: 'Lập trình viên Fullstack',
       phone: '0901234567', joinDate: '2025-07-20', active: true, emailVerified: true
+    },
+    {
+      id: '99999999-cccc-bbbb-aaaa-000000000000', name: 'Nguyễn Khách Hàng', email: 'khachhang@flowspace.demo',
+      password: defaultPassword, role: 'client', avatar: 'KH',
+      color: '#00cec9', department: 'Đối tác', position: 'Khách hàng liên kết',
+      phone: '0901112222', joinDate: '2025-07-20', active: true, emailVerified: true
     },
     {
       id: '55555555-5555-5555-5555-555555555555', name: 'Vũ Hoàng Giang', email: 'giang.vu@flowspace.demo',
@@ -121,7 +127,7 @@
       status: 'active', priority: 'high',
       startDate: daysAgo(90), endDate: daysFromNow(90),
       progress: 45, ownerId: '22222222-2222-2222-2222-222222222222',
-      members: ['44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', '77777777-7777-7777-7777-777777777777', '88888888-8888-8888-8888-888888888888'],
+      members: ['44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', '77777777-7777-7777-7777-777777777777', '88888888-8888-8888-8888-888888888888', '99999999-cccc-bbbb-aaaa-000000000000'],
       tags: ['product', 'fullstack', 'realtime'],
       createdAt: daysAgo(90)
     },
