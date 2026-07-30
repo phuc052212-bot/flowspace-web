@@ -215,8 +215,7 @@
       return level !== undefined ? level : 1;
     },
 
-    /** Kiểm tra có quyền truy cập trang không */
-    canAccess(page) { const required = PAGE_ACCESS[page] || 99; return this.getRoleLevel() >= required; },
+    canAccess(page) { const required = PAGE_ACCESS[page]; return this.getRoleLevel() >= (required !== undefined ? required : 99); },
 
     /** Kiểm tra có tối thiểu role level không */
     hasLevel(minLevel) { return this.getRoleLevel() >= minLevel; },
