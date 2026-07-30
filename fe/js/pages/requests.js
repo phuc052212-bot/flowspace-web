@@ -375,8 +375,39 @@
 
     async _processApproval(reqId, approvalId, decision) {
       const note = document.getElementById('req-approve-note')?.value || '';
+      const isDemo = !approvalId || approvalId === 'undefined' || String(reqId).startsWith('r');
 
-      if (approvalId) {
+      if (isDemo) {
+        const requests = FS.db.get('requests') || [];
+        const r = requests.find(x => x.id === reqId);
+        if (r) {
+          const session = FS.auth.getSession();
+          const pendingStep = (r.approvals || []).find(a => a.status === 'pending');
+          if (pendingStep) {
+            pendingStep.status = decision;
+            pendingStep.note = note;
+            pendingStep.approverId = session?.userId || 'u1';
+            pendingStep.approverName = session?.name || 'Người duyệt';
+            pendingStep.updatedAt = new Date().toISOString();
+          }
+
+          if (decision === 'rejected') {
+            r.status = 'rejected';
+          } else if (decision === 'returned') {
+            r.status = 'returned';
+          } else if ((r.approvals || []).every(a => a.status === 'approved')) {
+            r.status = 'approved';
+          }
+
+          r.updatedAt = new Date().toISOString();
+          FS.db.save('requests', r);
+          FS.toast(decision === 'approved' ? '✅ Đã phê duyệt! (Demo Offline)' : decision === 'returned' ? '↩️ Đã trả lại! (Demo Offline)' : '❌ Đã từ chối (Demo Offline)', 'success');
+          await this._loadData();
+          return;
+        }
+      }
+
+      if (approvalId && approvalId !== 'undefined') {
         try {
           const response = await FS.apiCall({
             url: FS.API_BASE + '/api/v1/approvals/' + approvalId + '/action',
@@ -385,7 +416,7 @@
           });
 
           if (response && response.success) {
-            FS.toast(decision === 'approved' ? '✅ Đã phê duyệt!' : '❌ Đã từ chối', decision === 'approved' ? 'success' : 'error');
+            FS.toast(decision === 'approved' ? '✅ Đã phê duyệt!' : decision === 'returned' ? '↩️ Đã trả lại!' : '❌ Đã từ chối', decision === 'approved' ? 'success' : 'error');
             await this._loadData();
             return;
           } else {
